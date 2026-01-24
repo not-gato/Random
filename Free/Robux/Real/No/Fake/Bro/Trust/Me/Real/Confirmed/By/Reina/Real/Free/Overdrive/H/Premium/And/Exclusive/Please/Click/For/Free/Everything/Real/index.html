@@ -20,33 +20,17 @@ padding:0;
 width:100%;
 height:100%;
 background:white;
-overflow:hidden;
-font-family:sans-serif
+overflow:hidden
 }
 .item{
 position:absolute;
 pointer-events:none
 }
-.notify{
-position:fixed;
-right:20px;
-bottom:20px;
-background:black;
-color:white;
-padding:10px 14px;
-border-radius:8px;
-margin-top:6px;
-animation:fade 2s forwards
-}
-@keyframes fade{
-0%{opacity:1}
-100%{opacity:0;transform:translateY(-20px)}
-}
 </style>
 </head>
 <body>
 
-<audio id="bg" src="https://random.getunx.cc/Assets/2c0e8675dda2864abf408e6202e82ae7.mp3" autoplay loop></audio>
+<audio id="bg" src="https://random.getunx.cc/Assets/2c0e8675dda2864abf408e6202e82ae7.mp3" loop></audio>
 
 <script>
 const base="https://api-gatostuff.vercel.app/raw/assets/randasset/"
@@ -54,7 +38,32 @@ const imgs=[
 "img/01dbc1adc829dc3554cce431b1a8f3a6.jpg",
 "img/0235d48ad3fe45089783ddc92521aee3.jpg",
 "img/10691eb4709bcd5d8d3b17b031787164.jpg",
-"img/1226e84d2281a615098ad9457322b835.jpg"
+"img/1226e84d2281a615098ad9457322b835.jpg",
+"img/338c9a7da8e176ddda0230c5ed26c278.jpg",
+"img/382972517045017670381c47a855d117.jpg",
+"img/5eb1c885de312465426aab90922d1607.jpg",
+"img/77fb4a1a5d1d6f930cb3ab91ca496cf7.jpg",
+"img/ae3a9b118c69688003b3a801346375a8.jpg",
+"img/c4d3698100293c74f2e6c9ef79657fb1.jpg",
+"img/dd45dd8f97930fbc089c9fb96af2993f.jpg",
+"img/df41ad14d190ebb715118fad3cceea9b.jpg",
+"img/e3b6e03fcba8fc463aca060613887543.jpg",
+"img/fd299b7208eb82e3f11a37e229424cd5.jpg",
+"img/new/07fdbae994fc0853a3a26482de71c208.jpg",
+"img/new/0bf53e3a8a81aba22c1abaa0fe4473a2.jpg",
+"img/new/31809a21a15ac4d69e27f16bee442847.jpg",
+"img/new/358dac5dfc20597f031364ebdbc79923.jpg",
+"img/new/38b554644470c1230377ce5026b07e4f.jpg",
+"img/new/3f0cf53d95cd22067e9b8505b95e6819.jpg",
+"img/new/4213e020870ba761bf9dc846ada0fcd4.jpg",
+"img/new/4241e30c111f61137078f88f5e4c21a3.jpg",
+"img/new/5bbeef93932c653ea109a4e25f3e952d.jpg",
+"img/new/b48d5d28b79a6c4e016c16a4adc97a28.jpg",
+"img/new/c2e43058773fe881dc9b6d69cf2c3b26.jpg",
+"img/new/d55141fb0f0d38fa48ed28990a3f1444.jpg",
+"img/new/fdd0e7417d6a29d55a74faedf3d8227f.jpg",
+"img/new/new/bigrat.jpg",
+"img/new/new/images (95).jpeg"
 ]
 
 const messages=[
@@ -69,34 +78,31 @@ let el
 if(isEmoji){
 el=document.createElement("div")
 el.textContent="🥭"
-el.style.fontSize=Math.random()*80+20+"px"
+el.style.fontSize=Math.random()*90+20+"px"
 }else{
 el=document.createElement("img")
 el.src=base+imgs[Math.floor(Math.random()*imgs.length)]
-el.style.width=Math.random()*200+50+"px"
+el.style.width=Math.random()*250+50+"px"
 }
 el.className="item"
-el.style.left=Math.random()*window.innerWidth+"px"
-el.style.top=Math.random()*window.innerHeight+"px"
+el.style.left=Math.random()*(innerWidth-100)+"px"
+el.style.top=Math.random()*(innerHeight-100)+"px"
 document.body.appendChild(el)
 setTimeout(()=>el.remove(),5000)
 }
 
-function notify(){
-const n=document.createElement("div")
-n.className="notify"
-n.textContent=messages[Math.floor(Math.random()*messages.length)]
-document.body.appendChild(n)
-setTimeout(()=>n.remove(),2000)
+function chromeAlert(){
+alert(messages[Math.floor(Math.random()*messages.length)])
 }
 
+function start(){
 setInterval(spawn,10)
-setInterval(notify,100)
+setInterval(chromeAlert,1500)
+}
 
 const audio=document.getElementById("bg")
-audio.loop=true
-audio.play().catch(()=>{
-document.addEventListener("click",()=>audio.play(),{once:true})
+audio.play().then(start).catch(()=>{
+addEventListener("click",()=>audio.play().then(start),{once:true})
 })
 </script>
 </body>
