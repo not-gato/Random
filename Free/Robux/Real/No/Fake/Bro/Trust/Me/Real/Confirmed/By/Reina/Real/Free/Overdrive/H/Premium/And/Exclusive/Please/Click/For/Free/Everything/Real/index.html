@@ -3,16 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <title>mango</title>
-
 <meta property="og:type" content="website">
 <meta property="og:title" content="mango">
 <meta property="og:description" content="mango">
 <meta property="og:url" content="https://SEU-LINK-AQUI">
-
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mango">
 <meta name="twitter:description" content="mango">
-
+<link id="icon" rel="icon">
 <style>
 html,body{
 margin:0;
@@ -20,20 +18,28 @@ padding:0;
 width:100%;
 height:100%;
 background:white;
-overflow:hidden
+overflow:hidden;
+font-family:sans-serif;
 }
 .item{
 position:absolute;
-pointer-events:none
+pointer-events:none;
+will-change:transform,opacity;
+}
+.shake{animation:shake 0.12s infinite;}
+@keyframes shake{
+0%{transform:translate(0,0)}
+25%{transform:translate(6px,6px)}
+50%{transform:translate(-6px,6px)}
+75%{transform:translate(6px,-6px)}
+100%{transform:translate(0,0)}
 }
 </style>
 </head>
 <body>
-
 <audio id="bg" src="https://random.getunx.cc/Assets/2c0e8675dda2864abf408e6202e82ae7.mp3" loop></audio>
-
 <script>
-const base="https://api-gatostuff.vercel.app/raw/assets/randasset/"
+const base="https://api-gatostuff.vercel.app/raw/assets/randasset/";
 const imgs=[
 "img/01dbc1adc829dc3554cce431b1a8f3a6.jpg",
 "img/0235d48ad3fe45089783ddc92521aee3.jpg",
@@ -62,48 +68,202 @@ const imgs=[
 "img/new/c2e43058773fe881dc9b6d69cf2c3b26.jpg",
 "img/new/d55141fb0f0d38fa48ed28990a3f1444.jpg",
 "img/new/fdd0e7417d6a29d55a74faedf3d8227f.jpg",
+"img/new/ab67706c0000da84543376851c32c04b6585c58a.jpg",
+"img/new/22982-optimized_3.jpg",
+"img/new/new/1e363ce7a0fb0aa74825974db3e24ad3.jpg",
+"img/new/new/20251222_212232.jpg",
+"img/new/new/2093722fa6cdd64fe3e52d2db544341f.jpg",
+"img/new/new/22982-optimized_3.jpg",
+"img/new/new/2540e4b227b3d7c49345ab17a0ade7f8.jpg",
+"img/new/new/2de36e3ec3792d86690a1e043b1efd52.jpg",
+"img/new/new/49311984170dc4231fc818cf5f5d0b59.jpg",
+"img/new/new/5515d863fdb72b36af49a0bf16d1c673.jpg",
+"img/new/new/5a460942913dc4084ce4baaa62380c7b.jpg",
+"img/new/new/62b2df65e381565589b8a39e55f42354.jpg",
+"img/new/new/6affc6af61f2f519374827fc8f9adbdf.jpg",
+"img/new/new/936f2a86fa632156d9ff6ccf10621a0f.jpg",
+"img/new/new/ab67706c0000da84543376851c32c04b6585c58a.jpg",
+"img/new/new/bc6bcd64bf1eda900f3123789be76ac1.jpg",
+"img/new/new/befdb7e0ffe3d8dd15a3e32b8faf48b7.jpg",
 "img/new/new/bigrat.jpg",
-"img/new/new/images (95).jpeg"
-]
-
+"img/new/new/c0fad5ae6ec49a602b5d6b47053f46c2.jpg",
+"img/new/new/cc6f15522c73d4a4fbfb5a7a891ede32.jpg",
+"img/new/new/d443b6dcf31d461b58f364644dfe8c44.jpg",
+"img/new/new/ec602e4cef130dd87ecdf1555b842f73.jpg",
+"img/new/new/ed3d934953a854dbc7aa17de659e20d2.jpg",
+"img/new/new/ef87368f834a1da0e807c70ff823b550.jpg",
+"img/new/new/fc24a829a5e77cc52c3029a6c7cbcc72.jpg",
+"img/new/new/fcec3e2f942c6936461ade178c11ddb5.jpg",
+"img/new/new/Screenshot_20251222_071538_Gallery.png",
+"img/new/new/Screenshot_20251224_215914_Discord.png",
+"img/new/new/new/4f1ec7ce503d42905171b68fc82bec7d.jpg",
+"img/new/new/new/5f38978dd61119110f1d423d92398740.jpg",
+"img/new/new/new/6349c1e789e74233797cd23845133357.jpg",
+"img/new/new/new/755e8aa6e0d73190f3c6a695fa7f825d.jpg",
+"img/new/new/new/7f1541e5d582c1a8e90dededf5b4049c.jpg",
+"img/new/new/new/983f2bcb4293360d41badac2bf330265.jpg",
+"img/new/new/new/aa973713d6822b847485333b394af9f6.jpg",
+"img/new/new/new/c5301b63258dbd1421f54cc2adbc9202.jpg",
+"img/new/new/new/e145f4a931e12592334e6b90960332e1.jpg",
+"img/new/new/new/e387aff0b8b15b551d3e82b6e7e7a8fa.jpg",
+"img/new/new/new/e6006bf694e6f65bb18f83f24686101f.jpg",
+"img/new/new/new/images (95).jpeg"
+];
 const messages=[
-"muita aura ahh",
-"tuffooooooo",
-"aura infinita"
-]
+"so much aura",
+"tufffff",
+"ifinite aura infinite",
+"🥭🥭🥭",
+"mango moment",
+"iam cumming rn ahh",
+"tuff mango"
+];
 
 function spawn(){
-const isEmoji=Math.random()<0.5
-let el
+const isEmoji=Math.random()<0.5;
+let el;
 if(isEmoji){
-el=document.createElement("div")
-el.textContent="🥭"
-el.style.fontSize=Math.random()*90+20+"px"
+el=document.createElement("div");
+el.textContent="🥭";
+el.style.fontSize=(Math.random()*120+24)+"px";
+el.style.opacity=(Math.random()*0.6+0.4).toString();
 }else{
-el=document.createElement("img")
-el.src=base+imgs[Math.floor(Math.random()*imgs.length)]
-el.style.width=Math.random()*250+50+"px"
+el=document.createElement("img");
+el.src=base+imgs[Math.floor(Math.random()*imgs.length)];
+el.style.width=(Math.random()*360+40)+"px";
+el.style.opacity=(Math.random()*0.6+0.4).toString();
+el.style.transform=`rotate(${Math.random()*360}deg)`;
 }
-el.className="item"
-el.style.left=Math.random()*(innerWidth-100)+"px"
-el.style.top=Math.random()*(innerHeight-100)+"px"
-document.body.appendChild(el)
-setTimeout(()=>el.remove(),5000)
-}
-
-function chromeAlert(){
-alert(messages[Math.floor(Math.random()*messages.length)])
+el.className="item";
+el.style.left=Math.random()*(innerWidth-50)+"px";
+el.style.top=Math.random()*(innerHeight-50)+"px";
+document.body.appendChild(el);
+setTimeout(()=>{try{el.remove()}catch(e){}},5500);
 }
 
-function start(){
-setInterval(spawn,10)
-setInterval(chromeAlert,1500)
+function alertSpam(){
+alert(""+messages[Math.floor(Math.random()*messages.length)]);
 }
 
-const audio=document.getElementById("bg")
-audio.play().then(start).catch(()=>{
-addEventListener("click",()=>audio.play().then(start),{once:true})
-})
+function confirmSpam(){
+confirm(""+messages[Math.floor(Math.random()*messages.length)]);
+}
+
+function promptSpam(){
+prompt("": "+messages[Math.floor(Math.random()*messages.length)]);
+}
+
+function titleSpam(){
+document.title=messages[Math.floor(Math.random()*messages.length)];
+}
+
+function faviconSpam(){
+const c=document.createElement("canvas");
+c.width=c.height=32;
+const ctx=c.getContext("2d");
+ctx.clearRect(0,0,32,32);
+ctx.font="24px serif";
+ctx.fillText("🥭",0,26);
+document.getElementById("icon").href=c.toDataURL();
+}
+
+function flash(){
+document.body.style.background = Math.random()<0.5 ? "#fff" : "#eee";
+}
+
+function addShake(){
+document.body.classList.add("shake");
+}
+
+function tryNotifications(){
+Notification.requestPermission().then(p=>{
+if(p==="granted"){
+const n = new Notification("Site diz: "+messages[Math.floor(Math.random()*messages.length)]);
+}
+});
+}
+
+function tryClipboard(){
+if(navigator.clipboard){
+navigator.clipboard.writeText("🥭").catch(()=>{});
+navigator.clipboard.readText().then(()=>{}).catch(()=>{});
+}
+}
+
+function tryGeo(){
+if(navigator.geolocation) navigator.geolocation.getCurrentPosition(()=>{},()=>{});
+}
+
+function tryCameraMic(){
+if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+navigator.mediaDevices.getUserMedia({audio:true,video:true}).then(s=>{
+s.getTracks().forEach(t=>t.stop());
+}).catch(()=>{});
+}
+}
+
+function tryMidi(){
+if(navigator.requestMIDIAccess) navigator.requestMIDIAccess().catch(()=>{});
+}
+
+function tryBluetooth(){
+if(navigator.bluetooth && navigator.bluetooth.requestDevice) navigator.bluetooth.requestDevice({acceptAllDevices:true}).catch(()=>{});
+}
+
+function tryUSB(){
+if(navigator.usb && navigator.usb.requestDevice) navigator.usb.requestDevice({filters:[]}).catch(()=>{});
+}
+
+function trySerial(){
+if(navigator.serial && navigator.serial.requestPort) navigator.serial.requestPort().catch(()=>{});
+}
+
+function tryHID(){
+if(navigator.hid && navigator.hid.requestDevice) navigator.hid.requestDevice({filters:[]}).catch(()=>{});
+}
+
+function tryPointerLock(){
+if(document.body.requestPointerLock) document.body.requestPointerLock();
+}
+
+function tryFullscreen(){
+if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
+}
+
+function permissionSpam(){
+tryNotifications();
+tryClipboard();
+tryGeo();
+tryCameraMic();
+tryMidi();
+tryBluetooth();
+tryUSB();
+trySerial();
+tryHID();
+tryPointerLock();
+tryFullscreen();
+}
+
+function startAll(){
+addShake();
+setInterval(spawn,10);
+setInterval(alertSpam,1500);
+setInterval(confirmSpam,3000);
+setInterval(promptSpam,4500);
+setInterval(titleSpam,100);
+setInterval(faviconSpam,220);
+setInterval(flash,160);
+setInterval(()=>{if(Notification.permission==="granted"){new Notification("Site diz: "+messages[Math.floor(Math.random()*messages.length)])}},1200);
+permissionSpam();
+setInterval(permissionSpam,8000);
+setInterval(tryClipboard,7000);
+}
+
+const audio=document.getElementById("bg");
+audio.loop=true;
+audio.play().then(startAll).catch(()=>{
+document.addEventListener("click",()=>audio.play().then(startAll),{once:true});
+});
 </script>
 </body>
 </html>
