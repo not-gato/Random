@@ -6,8 +6,6 @@
 <title>Wall of Gay</title>
 <link rel="icon" href="https://random.getunx.cc/Assets/Logo2.png" />
 
-<meta name="theme-color" content="#2aa7ff" />
-
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Wall of Gay" />
 <meta property="og:image" content="https://random.getunx.cc/Assets/Text.png" />
@@ -210,7 +208,8 @@ const users=[
 {name:"Lawyer Fraud",handle:"@fashionjvnkie",icon:"https://random.getunx.cc/Assets/Avatars/eb370c2924d1ca7482c50a8b2498eb71.png",id:"0"},
 {name:"!CAT",handle:"@cat_isherefr",icon:"https://random.getunx.cc/Assets/Avatars/ceaf93c427ee9a5bf64adcdd8d424cd9.png",id:"0"},
 {name:"Moserzxp",handle:"@yosoyn1ck",icon:"https://random.getunx.cc/Assets/Avatars/1749c68cd3b03e00c110ca7b658d747b.png",id:"0"},
-{name:"Pileton",handle:"@pileton",icon:"https://random.getunx.cc/Assets/Avatars/a_3681192f3d44bf49b272202e70ba66c9.gif",id:"0"}
+{name:"Pileton",handle:"@pileton",icon:"https://random.getunx.cc/Assets/Avatars/a_3681192f3d44bf49b272202e70ba66c9.gif",id:"0"},
+{name:"Seraj",handle:"@ser5j",icon:"https://random.getunx.cc/Assets/Avatars/895f8b0a87aa793346698f575a575e3b.png",id:"0"}
 ];
 
 const wall=document.getElementById("wall");
@@ -264,14 +263,6 @@ colors.forEach(c=>{
 const audio=document.getElementById("bg-audio");
 const toggle=document.getElementById("audio-toggle");
 const icon=document.getElementById("audio-icon");
-
-(async()=>{
-  try{
-    audio.muted=false;
-    await audio.play();
-    icon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-  }catch{}
-})();
 
 toggle.onclick=async()=>{
   if(audio.paused){
