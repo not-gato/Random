@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gato's Personal Page :D</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+html,body{
+  margin:0;
+  padding:0;
+  height:100%;
+  background:#05070d;
+  color:#eaeaff;
+  font-family:'Inter',sans-serif;
+  overflow:hidden;
+}
+
+#scene{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+
+.ball{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(160px);
+  opacity:.55;
+}
+
+.wrap{
+  position:relative;
+  z-index:2;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px;
+  text-align:center;
+}
+
+.content{
+  max-width:900px;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.big{
+  font-size:52px;
+  font-weight:800;
+  line-height:1.25;
+  margin-bottom:22px;
+}
+
+.small{
+  font-size:18px;
+  line-height:1.7;
+  margin-bottom:26px;
+  color:#d7dcff;
+}
+
+.section{
+  margin-top:14px;
+  font-size:17px;
+  line-height:1.7;
+}
+
+.grad{
+  background-size:300% 300%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  animation:walk 6s ease-in-out infinite;
+  font-weight:800;
+}
+
+.grad-blue-purple{
+  background-image:linear-gradient(90deg,#2a5cff,#7a4dff,#2a5cff);
+}
+
+.grad-blue-dark{
+  background-image:linear-gradient(90deg,#2a6bff,#0b1a55,#2a6bff);
+}
+
+.grad-python{
+  background-image:linear-gradient(90deg,#2a6bff,#ffd24d,#ffffff,#2a6bff);
+}
+
+.grad-luau{
+  background-image:linear-gradient(90deg,#2a6bff,#ffffff,#2a6bff);
+}
+
+.gray-italic{
+  color:#9aa0b8;
+  font-style:italic;
+}
+
+.discord{
+  color:#2a6bff;
+  font-weight:700;
+}
+
+@keyframes walk{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+#lanyard{
+  margin-top:34px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:16px 24px;
+  border-radius:20px;
+  background:rgba(10,14,40,.7);
+  border:1px solid rgba(80,120,255,.25);
+  backdrop-filter:blur(20px);
+  min-width:260px;
+  text-align:center;
+}
+
+#lanyard img{
+  width:54px;
+  height:54px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,.25);
+}
+
+.l-name{
+  font-weight:700;
+  font-size:15px;
+}
+
+.l-status{
+  font-size:13px;
+  color:#bfc6ff;
+}
+
+.l-presence{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-size:12px;
+  color:#9aa0b8;
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+}
+</style>
+</head>
+<body>
+
+<div id="scene"></div>
+
+<div class="wrap">
+  <div class="content">
+    <div class="big">
+      Hey i'm <span class="grad grad-blue-purple">Gato!</span>
+    </div>
+
+    <div class="small">
+      I am currently working on
+      <span class="grad grad-blue-dark">UNXHub</span>,
+      <span class="gray-italic">my only project.</span>
+    </div>
+
+    <div class="section">
+      Currently learning:
+      <span class="grad grad-python">Python 3.X</span>,
+      <span class="grad grad-luau">LUAU</span>
+    </div>
+
+    <div class="section">
+      Contact me on discord <span class="discord">(not_.gato)</span>
+    </div>
+
+    <div id="lanyard">
+      <img id="l-avatar">
+      <div class="l-name" id="l-name">Loading...</div>
+      <div class="l-status" id="l-status">Status</div>
+      <div class="l-presence">
+        <span class="dot" id="l-dot"></span>
+        <span id="l-presence-text">offline</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const scene=document.getElementById("scene");
+const colors=["#050b1e","#081028","#0a1230","#0b255f"];
+
+for(let i=0;i<8;i++){
+  const b=document.createElement("div");
+  b.className="ball";
+  const s=520+Math.random()*520;
+  b.style.width=b.style.height=s+"px";
+  b.style.background=colors[Math.floor(Math.random()*colors.length)];
+  b.style.left=Math.random()*100+"%";
+  b.style.top=Math.random()*100+"%";
+  scene.appendChild(b);
+}
+
+const uid="1333631679570645082";
+const ws=new WebSocket("wss://api.lanyard.rest/socket");
+
+const avatar=document.getElementById("l-avatar");
+const nameEl=document.getElementById("l-name");
+const statusEl=document.getElementById("l-status");
+const presenceText=document.getElementById("l-presence-text");
+const dot=document.getElementById("l-dot");
+
+function presenceColor(p){
+  return p==="online"?"#43ff9a":p==="idle"?"#ffd24d":p==="dnd"?"#ff4d4d":"#777";
+}
+
+ws.onmessage=e=>{
+  const d=JSON.parse(e.data);
+  if(d.op===1){
+    ws.send(JSON.stringify({op:2,d:{subscribe_to_id:uid}}));
+    setInterval(()=>ws.send(JSON.stringify({op:3})),30000);
+  }
+  if(d.t==="INIT_STATE"||d.t==="PRESENCE_UPDATE"){
+    const u=d.d;
+    avatar.src=`https://cdn.discordapp.com/avatars/${uid}/${u.discord_user.avatar}.png?size=128`;
+    nameEl.textContent=u.discord_user.username;
+    statusEl.textContent=u.activities?.[0]?.name||"No activity";
+    presenceText.textContent=u.discord_status;
+    dot.style.background=presenceColor(u.discord_status);
+  }
+};
+</script>
+
+</body>
+</html>
