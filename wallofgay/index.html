@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Wall Of Gay</title>
+    <link rel="icon" href="https://random.getunx.cc/Assets/Logo2.png" />
+
+    <!-- goof is gay lol -->
+    <meta name="description" content="Wall Of Gay | Made By Gato (@not_.gato)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Wall Of Gay" />
+    <meta property="og:description" content="Wall Of Gay | Made By Gato (@not_.gato)" />
+    <meta property="og:image" content="https://random.getunx.cc/Assets/Text.png" />
+    <meta property="og:image:alt" content="Wall Of Gay" />
+    <meta property="og:image:width" content="600" />
+    <meta property="og:image:height" content="200" />
+    <meta property="og:url" content="" />
+    <link rel="image_src" href="https://random.getunx.cc/Assets/Text.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Wall Of Gay" />
+    <meta name="twitter:description" content="Wall Of Gay | Made By Gato (@not_.gato)" />
+    <meta name="twitter:image" content="https://random.getunx.cc/Assets/Text.png" />
+    <meta name="twitter:image:alt" content="Wall Of Gay" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&display=swap" rel="stylesheet" />
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            background-color: #050505;
+            font-family: 'Open Sans', sans-serif;
+            color: white;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        #scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .ball {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.85;
+            will-change: transform;
+            box-shadow: inset 0 0 60px rgba(255,255,255,0.12);
+        }
+        #ui-layer {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 10vh;
+            padding-bottom: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .title-img {
+            max-width: 90%;
+            width: 380px;
+            height: auto;
+            margin-bottom: 18px;
+            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5));
+            display: block;
+        }
+        .wall-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            max-width: 420px;
+            padding-bottom: 40px;
+        }
+        .user-card {
+            display: flex;
+            align-items: center;
+            height: 80px;
+            padding: 0 15px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+            backdrop-filter: blur(18px) saturate(120%);
+            -webkit-backdrop-filter: blur(18px) saturate(120%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: white;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .user-card:active { transform: scale(0.98); }
+        @media (hover: hover) {
+            .user-card:hover {
+                transform: scale(1.02);
+                background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+                border-color: rgba(255, 255, 255, 0.22);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+            }
+        }
+        .avatar {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            background-color: #222;
+            border: 2px solid rgba(255,255,255,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+            width: 100%;
+        }
+        .display-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+        }
+        .handle {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.76);
+            margin-top: 3px;
+            font-family: monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .modal {
+            background: rgba(10, 10, 10, 0.45);
+            border-radius: 14px;
+            padding: 18px;
+            border: 1px solid rgba(255,255,255,0.06);
+            backdrop-filter: blur(14px) saturate(120%);
+            -webkit-backdrop-filter: blur(14px) saturate(120%);
+            box-shadow: 0 14px 40px rgba(0,0,0,0.6);
+        }
+        .audio-toggle {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 30;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 12px 34px rgba(0,0,0,0.5);
+            cursor: pointer;
+            backdrop-filter: blur(14px) saturate(130%);
+            -webkit-backdrop-filter: blur(14px) saturate(130%);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s;
+            filter: blur(0.6px);
+        }
+        .audio-toggle:active { transform: scale(0.96); }
+        .audio-toggle:hover { box-shadow: 0 18px 44px rgba(0,0,0,0.55); background: rgba(255,255,255,0.06); }
+        .audio-toggle svg { width: 28px; height: 28px; fill: white; opacity: 0.98; pointer-events: none; }
+        audio { display: none; }
+    </style>
+</head>
+<body>
+    <div id="scene"></div>
+    <div id="ui-layer">
+        <img src="https://random.getunx.cc/Assets/Text.png" alt="Wall Of Gay" class="title-img" />
+        <div class="wall-grid" id="wall"></div>
+    </div>
+    <audio id="bg-audio" src="https://random.getunx.cc/Assets/747953.mp3" loop playsinline autoplay muted></audio>
+    <button id="audio-toggle" class="audio-toggle" aria-label="Play or pause background music">
+        <svg viewBox="0 0 24 24" id="audio-icon" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <script>
+        const scene = document.getElementById('scene');
+        const ballCount = 5;
+        const colors = ['#FF0055', '#00FF99', '#00CCFF', '#FFEA00', '#9D00FF', '#FF4D00'];
+        const balls = [];
+        class Ball {
+            constructor(id) {
+                this.element = document.createElement('div');
+                this.element.classList.add('ball');
+                const minDim = Math.min(window.innerWidth, window.innerHeight);
+                const diameter = minDim * 0.60;
+                this.radius = diameter / 2;
+                this.element.style.width = `${diameter}px`;
+                this.element.style.height = `${diameter}px`;
+                this.element.style.backgroundColor = colors[id % colors.length];
+                this.x = Math.random() * (window.innerWidth - diameter) + this.radius;
+                this.y = Math.random() * (window.innerHeight - diameter) + this.radius;
+                const speed = Math.random() * 0.4 + 0.3;
+                const angle = Math.random() * Math.PI * 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                scene.appendChild(this.element);
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x + this.radius > window.innerWidth) { this.x = window.innerWidth - this.radius; this.vx *= -1; }
+                else if (this.x - this.radius < 0) { this.x = this.radius; this.vx *= -1; }
+                if (this.y + this.radius > window.innerHeight) { this.y = window.innerHeight - this.radius; this.vy *= -1; }
+                else if (this.y - this.radius < 0) { this.y = this.radius; this.vy *= -1; }
+                this.element.style.transform = `translate(${this.x - this.radius}px, ${this.y - this.radius}px)`;
+            }
+        }
+        for (let i = 0; i < ballCount; i++) balls.push(new Ball(i));
+        function animate() { balls.forEach(b => b.update()); requestAnimationFrame(animate); }
+        animate();
+        const users = [
+            { name: "! Axioria Solver", handle: "@elfandtears_ndk", icon: "https://random.getunx.cc/Assets/Avatars/64919f63a13e4a6a6a913a57abbe4a6b.png", id: "1183776221302104097" },
+            { name: "Goof", handle: "@goofisdead", icon: "https://random.getunx.cc/Assets/Avatars/18192dc862db365dacd46e5eef4c94be.png", id: "758979604412760074" },
+            { name: "Kill", handle: "@killertx", icon: "https://random.getunx.cc/Assets/Avatars/87e4e9daaef8819d49460369b5da0c66.png", id: "1105801492797083710" },
+            { name: ".", handle: "@lzzzx", icon: "https://random.getunx.cc/Assets/Avatars/c434f0e607ff7ebb480623172067cd1f.png", id: "586568393801596928" },
+            { name: "Osvaldo", handle: "@osvaldo355", icon: "https://random.getunx.cc/Assets/Avatars/e0892fefded24c2639d5ac8c13304732.png", id: "769227487925370931" }
+        ];
+        const wall = document.getElementById('wall');
+        users.forEach(user => {
+            const card = document.createElement('a');
+            card.className = 'user-card';
+            card.href = `https://discord.com/users/${user.id}`;
+            card.target = "_blank";
+            card.rel = "noopener noreferrer";
+            card.innerHTML = `<img src="${user.icon}" class="avatar" alt="pfp" /><div class="info"><div class="display-name">${user.name}</div><div class="handle">${user.handle}</div></div>`;
+            wall.appendChild(card);
+        });
+        const audio = document.getElementById('bg-audio');
+        const toggleBtn = document.getElementById('audio-toggle');
+        const icon = document.getElementById('audio-icon');
+        audio.volume = 0.9;
+        audio.muted = true;
+        audio.autoplay = true;
+        audio.loop = true;
+        audio.playsInline = true;
+        function setIconState() {
+            const playing = !audio.paused && !audio.ended;
+            const unmuted = !audio.muted;
+            if (playing && unmuted) icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            else if (playing && !unmuted) icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            else icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+        }
+        audio.play().then(() => {
+            setIconState();
+            setTimeout(async () => {
+                try {
+                    audio.muted = false;
+                    await audio.play();
+                    setIconState();
+                } catch (e) {
+                    audio.muted = true;
+                    setIconState();
+                }
+            }, 600);
+        }).catch(() => {
+            audio.muted = true;
+            setIconState();
+        });
+        toggleBtn.addEventListener('click', async () => {
+            if (audio.paused) {
+                try {
+                    audio.muted = false;
+                    await audio.play();
+                    setIconState();
+                } catch (e) {
+                    try {
+                        audio.muted = true;
+                        await audio.play();
+                        audio.muted = false;
+                        await audio.play();
+                        setIconState();
+                    } catch (err) {
+                        audio.muted = true;
+                        setIconState();
+                    }
+                }
+            } else {
+                if (!audio.muted) {
+                    audio.muted = true;
+                    setIconState();
+                } else {
+                    audio.pause();
+                    setIconState();
+                }
+            }
+        });
+        audio.addEventListener('play', () => setIconState());
+        audio.addEventListener('pause', () => setIconState());
+        audio.addEventListener('volumechange', () => setIconState());
+    </script>
+</body>
+</html>
