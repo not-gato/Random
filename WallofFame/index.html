@@ -78,18 +78,21 @@ header{
 
 .controls{
   display:flex;
+  flex-wrap:wrap;
   gap:12px;
   align-items:center;
+  justify-content:center;
 }
 
 .search{
-  width:260px;
-  max-width:70vw;
+  flex:1 1 180px;
+  max-width:200px;
   padding:12px 14px;
   border-radius:14px;
   background:rgba(255,255,255,.08);
   border:1px solid rgba(255,255,255,.18);
   color:white;
+  ::placeholder { color: #fff; opacity: 1; }
   backdrop-filter:blur(14px);
 }
 
@@ -109,6 +112,19 @@ header{
   width:22px;
   height:22px;
   fill:white;
+}
+
+.filter-select{
+  flex:1 1 140px;
+  max-width:150px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18);
+  color:white;
+  backdrop-filter:blur(14px);
+  appearance:none;
+  cursor:pointer;
 }
 
 .wall-grid{
@@ -186,6 +202,13 @@ footer{
     <img src="https://random.getunx.cc/Assets/Text.png" class="title-img">
     <div class="controls">
       <input id="search" class="search" placeholder="Search...">
+      <select id="filter" class="filter-select">
+        <option value="original">Original</option>
+        <option value="newest">Newest to Oldest</option>
+        <option value="oldest">Oldest to Newest</option>
+        <option value="alpha">Alphabetical A-Z</option>
+        <option value="reverse">Alphabetical Z-A</option>
+      </select>
       <button id="audio-toggle" class="audio-toggle">
         <svg id="audio-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
       </button>
@@ -218,6 +241,8 @@ const users=[
 
 const wall=document.getElementById("wall");
 const search=document.getElementById("search");
+const filter=document.getElementById("filter");
+let originalUsers=[...users];
 
 function render(list){
   wall.innerHTML="";
@@ -238,10 +263,21 @@ function render(list){
   });
 }
 
-search.oninput=e=>{
-  const q=e.target.value.toLowerCase();
-  render(users.filter(u=>(u.name+u.handle).toLowerCase().includes(q)));
-};
+function applyFilters(){
+  let filtered=[...originalUsers];
+  const q=search.value.toLowerCase();
+  filtered=filtered.filter(u=>(u.name+u.handle).toLowerCase().includes(q));
+  switch(filter.value){
+    case "newest": filtered.reverse(); break;
+    case "oldest": break;
+    case "alpha": filtered.sort((a,b)=>a.name.localeCompare(b.name)); break;
+    case "reverse": filtered.sort((a,b)=>b.name.localeCompare(a.name)); break;
+  }
+  render(filtered);
+}
+
+search.oninput=applyFilters;
+filter.onchange=applyFilters;
 
 render(users);
 
