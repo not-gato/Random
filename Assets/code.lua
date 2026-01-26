@@ -1,3 +1,5 @@
+local shared = odh_shared
+
 local section = shared.AddSection("Speed Glitch+")
 
 local enabled = false
