@@ -1,7 +1,3 @@
-local shared = odh_shared_plugins
-
-local _game = shared.game_name
-if _game == "Murder Mystery 2" then
 local section = shared.AddSection("Speed Glitch+")
 
 local enabled = false
@@ -152,5 +148,3 @@ end)
 section:AddSlider("Multiplier Cap <font color=\"rgb(60, 160, 255)\"><u>(Times To Multiply)</u></font>", 2, 10, 3, function(int)
 	multiplierCapVal = int
 end)
-
-end
