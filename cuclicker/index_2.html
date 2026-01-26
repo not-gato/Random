@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CU CLICKER: FINAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Share+Tech+Mono&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root { --c-red: #ff0040; --c-gold: #ffd700; --c-purple: #bd00ff; --c-panel: rgba(10, 10, 10, 0.98); }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; font-family: 'Share Tech Mono', monospace; color: white; height: 100vh; overflow: hidden; background: black; }
+        #game-wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; background-image: url('https://random.getunx.cc/Assets/75_Sem_Titulo_20250215142112.png'); background-repeat: repeat; background-size: 150px; transition: opacity 1s; }
+        .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2)); background-size: 100% 4px; pointer-events: none; z-index: 999; opacity: 0.3; }
+        .hud-top { background: black; border-bottom: 2px solid var(--c-purple); padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        #current-rank { font-family: 'Orbitron'; font-weight: 900; text-shadow: 0 0 10px currentColor; font-size: 1rem; text-transform: uppercase; }
+        .game-zone { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; z-index: 10; }
+        #score-display { font-family: 'Orbitron'; font-size: 3.5rem; font-weight: 900; margin: 0; text-shadow: 4px 4px 0px black, 0 0 30px var(--c-gold); text-align: center; word-break: break-all; padding: 0 10px; }
+        .stats-small { background: black; border: 1px solid var(--c-gold); padding: 5px 15px; margin: 20px 0; color: var(--c-gold); font-size: 1.1rem; font-weight: bold; }
+        #btn-cu { width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, #ff0040 0%, #550000 100%); border: 6px solid white; box-shadow: 0 0 50px var(--c-red); cursor: pointer; position: relative; outline: none; font-family: 'Orbitron'; font-weight: 900; font-size: 1.5rem; color: white; text-shadow: 0 2px 5px black; transition: transform 0.05s; }
+        #btn-cu:active { transform: scale(0.95); }
+        #btn-shop-open { position: absolute; bottom: 30px; background: var(--c-purple); color: white; border: 2px solid white; padding: 15px 40px; font-family: 'Orbitron'; font-weight: 900; font-size: 1.2rem; cursor: pointer; box-shadow: 0 0 20px var(--c-purple); z-index: 50; }
+        #shop-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--c-panel); z-index: 2000; display: none; flex-direction: column; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .shop-header { padding: 20px; background: linear-gradient(90deg, #1a0024, black); color: var(--c-purple); display: flex; justify-content: space-between; align-items: center; font-family: 'Orbitron'; font-size: 1.5rem; border-bottom: 2px solid #444; }
+        .shop-items { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .close-btn { background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer; }
+        .card { background: #111; border: 1px solid #333; padding: 15px; display: grid; grid-template-columns: 1fr auto; align-items: center; position: relative; }
+        .card.epstein-tier { border: 1px solid var(--c-purple); box-shadow: inset 0 0 15px rgba(189, 0, 255, 0.2); }
+        .card.cursed-tier { border: 2px solid red; background-size: cover; background-position: center; height: 140px; text-shadow: 2px 2px 0 #000; }
+        .card.cursed-tier h3, .card.cursed-tier small, .card.cursed-tier .effect { background: rgba(0,0,0,0.8); padding: 2px 5px; }
+        .card-details h3 { margin: 0; font-size: 1rem; color: white; text-transform: uppercase; }
+        .card-details small { color: #888; font-size: 0.8rem; display: block; margin-top: 5px; }
+        .card-details .effect { color: var(--c-gold); font-size: 0.9rem; font-weight: bold; margin-top: 5px; }
+        .card-btn { background: rgba(0,0,0,0.5); border: 1px solid #555; color: #fff; padding: 12px; cursor: pointer; min-width: 100px; font-family: 'Share Tech Mono'; font-weight: bold; font-size: 1rem; }
+        .card:not(.disabled) .card-btn { border-color: var(--c-gold); color: var(--c-gold); }
+        .card.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+        #transition-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: yellow; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 5s ease-out; }
+        #boss-container { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; background: black; position: absolute; top:0; left:0; z-index: 5000; }
+        #patrick-img { width: 200px; height: 200px; object-fit: cover; margin-top: 50px; border: 4px solid white; animation: float 3s infinite ease-in-out; }
+        .battle-ui { width: 100%; max-width: 600px; margin-top: auto; padding: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; visibility: hidden; }
+        .rpg-btn { background: black; color: #ff8800; border: 2px solid #ff8800; padding: 15px 5px; font-family: 'Press Start 2P', cursive; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; }
+        .rpg-btn:hover { background: #ff8800; color: black; }
+        #battle-arena { border: 4px solid white; background: black; margin-top: 20px; display: none; cursor: none; }
+        #attack-bar-container { width: 80%; max-width: 500px; height: 40px; border: 4px solid white; background: black; position: relative; margin-top: 50px; display: none; cursor: pointer; }
+        .dmg-zone { height: 100%; position: absolute; top: 0; }
+        .z-red { background: red; width: 100%; left: 0; }
+        .z-orange { background: orange; width: 60%; left: 20%; }
+        .z-yellow { background: yellow; width: 30%; left: 35%; }
+        .z-green { background: lime; width: 10%; left: 45%; }
+        #attack-indicator { width: 6px; height: 100%; background: white; position: absolute; left: 0; top: 0; border: 1px solid black; }
+        .hp-bar-box { width: 80%; max-width: 500px; margin: 10px 0; color: white; font-family: 'Orbitron'; visibility: hidden; }
+        .hp-fill { height: 20px; background: lime; width: 100%; transition: width 0.2s; }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .shake { animation: shake 0.5s; }
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 100% { transform: translate(0, 0) rotate(0); } }
+    </style>
+</head>
+<body>
+<div id="transition-overlay"></div>
+<div class="scanlines"></div>
+<div id="game-wrapper">
+    <div class="hud-top">
+        <div style="font-weight: bold;">CU CLICKER <span style="color:var(--c-purple);">∞</span></div>
+        <div id="current-rank">NOOB</div>
+    </div>
+    <div class="game-zone">
+        <div id="score-display">0</div>
+        <div class="stats-small">PODER: <span id="power-display">1</span></div>
+        <button id="btn-cu" onclick="clickCu(event)">CLICAR</button>
+        <button id="btn-shop-open" onclick="toggleShop(true)">ABRIR LOJA</button>
+    </div>
+</div>
+<div id="shop-modal">
+    <div class="shop-header">
+        <span>LOJA</span>
+        <button class="close-btn" onclick="toggleShop(false)">×</button>
+    </div>
+    <div class="shop-items" id="shop-container"></div>
+    <div style="padding:20px; text-align:center;">
+        <button onclick="resetGame()" style="background:#300; color:red; border:1px solid red; padding:15px; width:100%;">RESETAR TUDO</button>
+    </div>
+</div>
+<div id="boss-container">
+    <div class="hp-bar-box">
+        PATRICK HP <span id="boss-hp-text">100/100</span>
+        <div style="background:red; width:100%; height:20px;"><div id="boss-hp-bar" class="hp-fill"></div></div>
+    </div>
+    <img src="https://random.getunx.cc/Assets/ef0762a4e052edfdf18c80e06a2579eb.jpg" id="patrick-img">
+    <div id="battle-msg" style="height: 30px; margin-top: 10px; color: yellow; font-weight: bold; text-align:center;"></div>
+    <div id="attack-bar-container" onclick="playerStrike()">
+        <div class="dmg-zone z-red"></div>
+        <div class="dmg-zone z-orange"></div>
+        <div class="dmg-zone z-yellow"></div>
+        <div class="dmg-zone z-green"></div>
+        <div id="attack-indicator"></div>
+    </div>
+    <canvas id="battle-arena" width="300" height="300"></canvas>
+    <div class="hp-bar-box" style="margin-top:auto;">
+        VOCÊ HP <span id="player-hp-text">100/100</span>
+        <div style="background:red; width:100%; height:20px; margin-bottom: 5px;">
+            <div id="player-hp-bar" class="hp-fill" style="background:yellow;"></div>
+        </div>
+    </div>
+    <div class="battle-ui" id="battle-controls">
+        <button class="rpg-btn" onclick="startAttackPhase()">ATACAR</button>
+        <button class="rpg-btn" onclick="rpgAction('correr')">CORRER</button>
+        <button class="rpg-btn" onclick="rpgAction('item')">ITEM</button>
+        <button class="rpg-btn" onclick="rpgAction('mercy')">MERCY</button>
+    </div>
+</div>
+<script>
+    const sClick = new Audio('https://random.getunx.cc/Assets/496be4bf54065c758ee0fdc7963ea806.mp3.mp4');
+    const sCursed = new Audio('https://random.getunx.cc/Assets/dfec0a9aad11a7d50df3b41a757e9945.mp3');
+    const sExplosion = new Audio('https://random.getunx.cc/Assets/explosion-sound-effect-425455.mp3');
+    const sUpgrade = new Audio('https://www.myinstants.com/media/sounds/vine-boom.mp3');
+    const sBossMusic = new Audio('https://random.getunx.cc/Assets/246940-9197049f-e352-4a71-bdea-9303e664c54d.mp3');
+    sBossMusic.loop = true;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep() {
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.type = 'square'; osc.frequency.value = 440;
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    }
+
+    let game = {
+        score: 0,
+        infinitos: 0,
+        patrickDefeated: false,
+        upgrades: {
+            u1: { count: 0, cost: 50, name: "Noriel (Lvl 1)", desc: "Início básico.", effect: "+1 Flat", type: "flat", val: 1, tier: "normal" },
+            u2: { count: 0, cost: 200, name: "Noriel (Aura Pobre)", desc: "Começando a moggar.", effect: "x2 Mult", type: "mult", val: 2, tier: "normal" },
+            u3: { count: 0, cost: 2000, name: "Noriel (Aura Ligada)", desc: "Brilho intenso.", effect: "+5 Flat", type: "flat", val: 5, tier: "normal" },
+            u4: { count: 0, cost: 5000, name: "Alpha Moggador", desc: "Poderoso.", effect: "x4 Mult", type: "mult", val: 4, tier: "normal" },
+            e1: { count: 0, cost: 10000, name: "Epstein (Lvl 1)", desc: "A Ilha.", effect: "x10 Mult", type: "mult", val: 10, tier: "epstein" },
+            e2: { count: 0, cost: 50000, name: "Epstein (ERN)", desc: "Energia Pura.", effect: "+100 Flat", type: "flat", val: 100, tier: "epstein" },
+            e3: { count: 0, cost: 100000, name: "Epstein (EFN)", desc: "Velocidade da Luz.", effect: "x50 Mult", type: "mult", val: 50, tier: "epstein" },
+            e4: { count: 0, cost: 500000, name: "Epstein (ERDAH)", desc: "Destruidor.", effect: "x100 Mult", type: "mult", val: 100, tier: "epstein" },
+            e5: { count: 0, cost: 1000000, name: "Epstein (MÁXIMA)", desc: "AURA + EGO + LA ELE", effect: "x500 Mult", type: "mult", val: 500, tier: "epstein" },
+            cursed: { 
+                count: 0, cost: 99999999999, name: "Porque essa porra nao sai", desc: "essa porra nao quer sair", 
+                effect: "-2000x de cu clicks", type: "mult", val: 2000, tier: "cursed",
+                bg: "https://random.getunx.cc/Assets/Screenshot_20260125_234139_TikTok.png"
+            }
+        }
+    };
+
+    const ranks = [
+        { limit: 0, title: "Noob Sem Aura", color: "#666" },
+        { limit: 500, title: "Betinha", color: "#fff" },
+        { limit: 2000, title: "Beta", color: "#00f7ff" },
+        { limit: 10000, title: "Beta Com Aura Paia", color: "#00ff00" },
+        { limit: 50000, title: "Mini Mogger", color: "#ffff00" },
+        { limit: 200000, title: "Aura + Ego", color: "#ff8800" },
+        { limit: 1000000, title: "Alpha Com Aura", color: "#ff0000" },
+        { limit: 500000000, title: "Aura Super Moggadora", color: "#ff00ff" },
+        { limit: 1000000000000, title: "Moggador Supremo", color: "#bd00ff" }
+    ];
+
+    let bossState = { active: false, playerHp: 100, bossHp: 100, round: 1 };
+
+    const saved = localStorage.getItem('cuClickerFinalSaveV3');
+    if(saved) {
+        try {
+            const p = JSON.parse(saved);
+            game.score = p.score || 0;
+            game.infinitos = p.infinitos || 0;
+            game.patrickDefeated = p.patrickDefeated || false;
+            Object.keys(p.upgrades).forEach(k => {
+                if(game.upgrades[k]) {
+                    game.upgrades[k].count = p.upgrades[k].count;
+                    let m = 1.5;
+                    if(game.upgrades[k].tier === 'epstein') m = 1.8;
+                    if(game.upgrades[k].tier === 'cursed') m = 2.0;
+                    game.upgrades[k].cost = Math.floor(game.upgrades[k].cost * Math.pow(m, p.upgrades[k].count));
+                }
+            });
+        } catch(e) {}
+    }
+
+    function getPower() {
+        let flat = 1 + (game.upgrades.u1.count) + (game.upgrades.u3.count * 5) + (game.upgrades.e2.count * 100);
+        let mult = 1 * Math.pow(2, game.upgrades.u2.count) * Math.pow(4, game.upgrades.u4.count) * 
+                   Math.pow(10, game.upgrades.e1.count) * Math.pow(50, game.upgrades.e3.count) * 
+                   Math.pow(100, game.upgrades.e4.count) * Math.pow(500, game.upgrades.e5.count) *
+                   Math.pow(2000, game.upgrades.cursed.count);
+        return flat * mult;
+    }
+
+    function formatNum(num) {
+        if(num === Infinity || !isFinite(num)) return "MAX";
+        if(num >= 1e21) return num.toExponential(2);
+        if(num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
+        if(num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+        if(num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+        if(num >= 1e3) return (num / 1e3).toFixed(1) + 'K';
+        return Math.floor(num).toLocaleString();
+    }
+
+    function updateUI() {
+        if(bossState.active) return;
+        const pwr = getPower();
+        let displayScore = formatNum(game.score);
+        if(game.infinitos > 0) displayScore = (game.infinitos === 1 ? "∞" : game.infinitos + "∞") + " + " + displayScore;
+        document.getElementById('score-display').innerText = displayScore;
+        document.getElementById('power-display').innerText = formatNum(pwr);
+        let current = ranks[0];
+        if(game.infinitos > 0) current = ranks[ranks.length-1];
+        else for(let r of ranks) if(game.score >= r.limit) current = r;
+        const el = document.getElementById('current-rank');
+        el.innerText = game.infinitos > 0 ? "DEUS DO INFINITO" : current.title;
+        el.style.color = current.color;
+        renderShop();
+        localStorage.setItem('cuClickerFinalSaveV3', JSON.stringify(game));
+    }
+
+    function clickCu(e) {
+        let pwr = getPower();
+        if (!isFinite(pwr)) { triggerInfinito(); pwr = 0; }
+        game.score += pwr;
+        if (!isFinite(game.score)) { triggerInfinito(); }
+        spawnPart(e.clientX, e.clientY, `+${formatNum(pwr)}`);
+        sClick.currentTime = 0; sClick.play().catch(()=>{});
+        updateUI();
+    }
+
+    function triggerInfinito() {
+        game.infinitos++;
+        game.score = 0;
+        if(game.infinitos >= 1000 && !game.patrickDefeated) triggerEndgame();
+    }
+
+    function renderShop() {
+        const c = document.getElementById('shop-container');
+        c.innerHTML = '';
+        Object.keys(game.upgrades).forEach(k => {
+            const i = game.upgrades[k];
+            const div = document.createElement('div');
+            const canBuy = game.infinitos > 0 || game.score >= i.cost;
+            div.className = `card ${canBuy ? '' : 'disabled'} ${i.tier}-tier`;
+            if(i.tier === 'cursed') div.style.backgroundImage = `url('${i.bg}')`;
+            div.innerHTML = `
+                <div class="card-details">
+                    <h3>${i.name}</h3>
+                    <small>Lvl: ${i.count}</small>
+                    <div class="effect">${i.effect}</div>
+                </div>
+                <button class="card-btn" onclick="buy('${k}')">${game.infinitos > 0 && i.tier !== 'cursed' ? 'GRÁTIS' : formatNum(i.cost)}</button>
+            `;
+            c.appendChild(div);
+        });
+    }
+
+    function buy(k) {
+        const i = game.upgrades[k];
+        if (game.infinitos > 0 && i.tier !== 'cursed') {
+            i.count++;
+        } else if (game.score >= i.cost) {
+            game.score -= i.cost;
+            i.count++;
+            let m = 1.5;
+            if(i.tier === 'epstein') m = 1.8;
+            if(i.tier === 'cursed') m = 2.0;
+            i.cost = Math.floor(i.cost * m);
+        }
+        if(i.tier === 'cursed') { sCursed.currentTime = 0; sCursed.play().catch(()=>{}); }
+        else { sUpgrade.currentTime = 0; sUpgrade.play().catch(()=>{}); }
+        updateUI();
+    }
+
+    function toggleShop(open) { document.getElementById('shop-modal').style.display = open ? 'flex' : 'none'; }
+    function resetGame() { if(confirm("ZERAR?")) { localStorage.removeItem('cuClickerFinalSaveV3'); location.reload(); } }
+    function spawnPart(x,y,t) {
+        const d = document.createElement('div');
+        d.innerText = t; d.style.position = 'absolute'; d.style.left = (x||window.innerWidth/2)+'px'; d.style.top = (y||window.innerHeight/3)+'px';
+        d.style.color = 'white'; d.style.fontSize = '1.5rem'; d.style.fontWeight = 'bold'; d.style.pointerEvents = 'none';
+        d.style.animation = 'float 0.8s forwards'; d.style.zIndex = 1000;
+        document.body.appendChild(d); setTimeout(()=>d.remove(), 800);
+    }
+    
+    function triggerEndgame() {
+        bossState.active = true;
+        sExplosion.play();
+        const overlay = document.getElementById('transition-overlay');
+        overlay.style.opacity = '1';
+        document.getElementById('game-wrapper').style.opacity = '0';
+        document.getElementById('shop-modal').style.display = 'none';
+        document.getElementById('current-rank').innerText = "???";
+        setTimeout(() => {
+            overlay.style.opacity = '0';
+            document.getElementById('game-wrapper').style.display = 'none';
+            setTimeout(() => { startDialogue(); }, 2000);
+        }, 5000);
+    }
+
+    function startDialogue() {
+        document.getElementById('boss-container').style.display = 'flex';
+        sBossMusic.play();
+        setTimeout(() => { alert("Patrick: ..."); }, 100);
+        setTimeout(() => { alert("Você: Oi porra"); }, 1000);
+        setTimeout(() => { alert("Patrick: ..."); }, 2000);
+        setTimeout(() => { alert("Você: ta bem seu filho duma puta"); startBattleMode(); }, 3000);
+    }
+
+    function startBattleMode() {
+        document.querySelector('.battle-ui').style.visibility = 'visible';
+        document.querySelectorAll('.hp-bar-box').forEach(el => el.style.visibility = 'visible');
+        updateHealthUI();
+    }
+
+    function rpgAction(action) {
+        if(action === 'mercy' || action === 'correr' || action === 'item') { alert("Patrick: nao sei pora kkkkk"); }
+    }
+
+    let attackAnim, attackPos = 0, attackSpeed = 2, attackDir = 1;
+    function startAttackPhase() {
+        document.getElementById('battle-controls').style.display = 'none';
+        document.getElementById('attack-bar-container').style.display = 'block';
+        document.getElementById('battle-msg').innerText = "CLIQUE!";
+        attackPos = 0; attackDir = 1; attackSpeed = 2 + (bossState.round * 0.5);
+        function loop() {
+            const ind = document.getElementById('attack-indicator');
+            attackPos += attackSpeed * attackDir;
+            if (attackPos > 100 || attackPos < 0) attackDir *= -1;
+            ind.style.left = attackPos + '%';
+            attackAnim = requestAnimationFrame(loop);
+        }
+        loop();
+    }
+
+    function playerStrike() {
+        cancelAnimationFrame(attackAnim);
+        document.getElementById('attack-bar-container').style.display = 'none';
+        let dmg = 0, p = attackPos;
+        if (p >= 45 && p <= 55) dmg = 40;
+        else if (p >= 35 && p <= 65) dmg = 35;
+        else if (p >= 20 && p <= 80) dmg = 30;
+        else dmg = 10;
+        bossState.bossHp -= dmg;
+        if(bossState.bossHp < 0) bossState.bossHp = 0;
+        updateHealthUI();
+        document.getElementById('patrick-img').classList.add('shake');
+        setTimeout(()=>document.getElementById('patrick-img').classList.remove('shake'), 500);
+        document.getElementById('battle-msg').innerText = `DANO: ${dmg}`;
+        if(bossState.bossHp <= 0) {
+            setTimeout(() => { 
+                alert("Patrick: A educacao... venceu...");
+                game.patrickDefeated = true;
+                game.score = 0;
+                game.infinitos = 0;
+                Object.keys(game.upgrades).forEach(k => {
+                    game.upgrades[k].count = 0;
+                    if(k.startsWith('u')) game.upgrades[k].cost = [50,200,2000,5000][parseInt(k[1])-1];
+                    else if(k.startsWith('e')) game.upgrades[k].cost = [10000,50000,100000,500000,1000000][parseInt(k[1])-1];
+                    else game.upgrades[k].cost = 99999999999;
+                });
+                localStorage.setItem('cuClickerFinalSaveV3', JSON.stringify(game));
+                location.reload(); 
+            }, 1000);
+            return;
+        }
+        setTimeout(() => startDefensePhase(), 1500);
+    }
+
+    const cvs = document.getElementById('battle-arena');
+    const ctx = cvs.getContext('2d');
+    let gameLoop, frameCount = 0;
+    let heart = { x: 150, y: 150, r: 8 };
+    let attacks = [], puddles = [], minions = [], lasers = [], heals = [];
+
+    function updateInput(x, y) {
+        const rect = cvs.getBoundingClientRect();
+        heart.x = Math.max(0, Math.min(300, x - rect.left));
+        heart.y = Math.max(0, Math.min(300, y - rect.top));
+    }
+    document.addEventListener('mousemove', e => { if(cvs.style.display === 'block') updateInput(e.clientX, e.clientY); });
+    document.addEventListener('touchmove', e => { if(cvs.style.display === 'block') updateInput(e.touches[0].clientX, e.touches[0].clientY); }, {passive: false});
+
+    function startDefensePhase() {
+        document.getElementById('battle-msg').innerText = `ROUND ${bossState.round}: DESVIE!`;
+        cvs.style.display = 'block';
+        heart.x = 150; heart.y = 150; attacks = []; puddles = []; minions = []; lasers = []; heals = []; frameCount = 0;
+        let duration = 300 + (bossState.round * 50);
+        function loop() {
+            updateDefense(); drawDefense(); frameCount++;
+            if (frameCount < duration && bossState.playerHp > 0) gameLoop = requestAnimationFrame(loop);
+            else endDefense();
+        }
+        gameLoop = requestAnimationFrame(loop);
+    }
+
+    function endDefense() {
+        cancelAnimationFrame(gameLoop);
+        cvs.style.display = 'none';
+        playBeep();
+        if (bossState.playerHp <= 0) {
+            alert("VOCÊ MORREU."); location.reload();
+        } else {
+            bossState.round++;
+            document.getElementById('battle-msg').innerText = "SUA VEZ!";
+            document.getElementById('battle-controls').style.display = 'grid';
+        }
+    }
+
+    function updateDefense() {
+        let diff = 1 + (bossState.round * 0.2);
+        if(bossState.round >= 3) diff *= 1.3;
+
+        if (frameCount % 1800 === 0 && frameCount > 0) heals.push({x: Math.random()*280+10, y: Math.random()*280+10, r: 10});
+
+        if (frameCount % Math.max(20, 60 - bossState.round*5) === 0) {
+            attacks.push({ type: 'ray', x: Math.random()*300, y: -50, vx: (Math.random()-0.5)*2, vy: 3*diff, w: 10, h: 40, c: 'yellow' });
+        }
+        if (frameCount % 400 === 0) {
+            let cols = [0,60,120,180,240];
+            let safe = Math.floor(Math.random()*5);
+            cols.forEach((x, i) => {
+                if(i !== safe) lasers.push({x:x, y:0, w:60, h:300, timer:300, state:'charge'});
+            });
+        }
+        if (frameCount % 150 === 0) {
+            puddles.push({ x: Math.random()*250+25, y: Math.random()*250+25, r: 1, maxR: 30+(bossState.round*5), life: 300, grow: true });
+        }
+        if (frameCount % 200 === 0 && bossState.round > 1) {
+            minions.push({ x: Math.random()<0.5?0:300, y: Math.random()*300, vx: (150-heart.x)*0.01, vy: (150-heart.y)*0.01, r: 15 });
+        }
+
+        for (let i = heals.length-1; i>=0; i--) {
+            let h = heals[i];
+            if(Math.hypot(h.x-heart.x, h.y-heart.y) < h.r+heart.r) { bossState.playerHp = Math.min(100, bossState.playerHp+30); updateHealthUI(); heals.splice(i,1); }
+        }
+
+        for (let i = lasers.length-1; i>=0; i--) {
+            let l = lasers[i];
+            l.timer--;
+            if(l.timer <= 0 && l.state === 'charge') { l.state = 'active'; l.timer = 30; }
+            if(l.state === 'active') {
+                if(col(l.x, l.y, l.w, l.h, heart.x, heart.y, heart.r)) hit(50);
+            }
+            if(l.timer <= 0 && l.state === 'active') lasers.splice(i,1);
+        }
+
+        for (let i = attacks.length-1; i>=0; i--) {
+            let a = attacks[i]; 
+            if(bossState.round >= 2 && a.type === 'ray') {
+                let dx = heart.x - a.x, dy = heart.y - a.y;
+                let ang = Math.atan2(dy, dx);
+                a.vx += Math.cos(ang) * 0.2; a.vy += Math.sin(ang) * 0.2;
+                let spd = Math.hypot(a.vx, a.vy);
+                if(spd > 4*diff) { a.vx = (a.vx/spd)*4*diff; a.vy = (a.vy/spd)*4*diff; }
+            }
+            a.x += a.vx; a.y += a.vy;
+            if (col(a.x, a.y, a.w, a.h, heart.x, heart.y, heart.r)) { hit(5); attacks.splice(i, 1); continue; }
+            if (a.y > 350 || a.y < -100 || a.x < -50 || a.x > 350) attacks.splice(i, 1);
+        }
+        for (let i = puddles.length-1; i>=0; i--) {
+            let p = puddles[i];
+            if (p.grow) { p.r += 0.5*diff; if(p.r >= p.maxR) p.grow = false; }
+            p.life--;
+            if (Math.hypot(p.x-heart.x, p.y-heart.y) < p.r+heart.r && frameCount%6===0) hit(2);
+            if (p.life <= 0) puddles.splice(i, 1);
+        }
+        for (let i = minions.length-1; i>=0; i--) {
+            let m = minions[i]; m.x += m.vx*diff; m.y += m.vy*diff;
+            if (Math.hypot(m.x-heart.x, m.y-heart.y) < m.r+heart.r) { hit(20); minions.splice(i, 1); continue; }
+        }
+    }
+
+    function drawDefense() {
+        ctx.fillStyle = 'black'; ctx.fillRect(0,0,300,300);
+        lasers.forEach(l => { ctx.fillStyle = l.state === 'charge' ? 'rgba(0,255,0,0.2)' : 'lime'; ctx.fillRect(l.x, l.y, l.w, l.h); });
+        puddles.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,0,0.5)'; ctx.fill(); });
+        attacks.forEach(a => { ctx.fillStyle = a.c; ctx.fillRect(a.x, a.y, a.w, a.h); });
+        minions.forEach(m => { ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI*2); ctx.fillStyle = 'purple'; ctx.fill(); });
+        heals.forEach(h => { ctx.beginPath(); ctx.arc(h.x, h.y, h.r, 0, Math.PI*2); ctx.fillStyle = 'white'; ctx.fill(); ctx.fillStyle='green'; ctx.fillText("+", h.x-4, h.y+4);});
+        ctx.fillStyle = 'red'; ctx.font = "20px Arial"; ctx.fillText("❤️", heart.x-10, heart.y+8);
+    }
+
+    function col(rx, ry, rw, rh, cx, cy, cr) {
+        let tx = Math.max(rx, Math.min(cx, rx+rw));
+        let ty = Math.max(ry, Math.min(cy, ry+rh));
+        return (cx-tx)**2 + (cy-ty)**2 <= cr*cr;
+    }
+
+    function hit(d) {
+        bossState.playerHp -= d;
+        sClick.currentTime = 0; sClick.play().catch(()=>{});
+        updateHealthUI();
+        cvs.style.borderColor = 'red'; setTimeout(()=>cvs.style.borderColor='white', 100);
+    }
+
+    function updateHealthUI() {
+        document.getElementById('player-hp-bar').style.width = Math.max(0, bossState.playerHp) + '%';
+        document.getElementById('player-hp-text').innerText = Math.floor(bossState.playerHp) + "/100";
+        document.getElementById('boss-hp-bar').style.width = Math.max(0, bossState.bossHp) + '%';
+        document.getElementById('boss-hp-text').innerText = Math.floor(bossState.bossHp) + "/100";
+    }
+
+    const style = document.createElement("style");
+    style.innerText = `@keyframes floatUp { to { transform: translateY(-80px); opacity: 0; } }`;
+    document.head.appendChild(style);
+
+    updateUI();
+</script>
+</body>
+</html>
