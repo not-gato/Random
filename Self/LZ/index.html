@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            width: 100%;
+            /* Fix centering on mobile browsers */
+            min-height: 100vh;
+            min-height: 100dvh; 
+            background-color: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .bg-layer {
+            position: fixed;
+            top: -10%; left: -10%; width: 120%; height: 120%;
+            z-index: 1;
+            
+            /* UPDATED GRADIENT & ANIMATION SETUP */
+            background: linear-gradient(135deg, #660000 0%, #200000 50%, #4a0000 100%);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite alternate, pulse-zoom 10s ease-in-out infinite alternate;
+        }
+
+        /* The slow color shifting animation */
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        @keyframes pulse-zoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .noise-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.3'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+            pointer-events: none;
+        }
+
+        .glass-box {
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(80px);
+            -webkit-backdrop-filter: blur(80px);
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
+            color: #fff;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .profile-modal {
+            width: 90%;
+            max-width: 380px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px; 
+            padding: 35px 25px 20px 25px;
+            border-radius: 24px;
+            margin-bottom: 20px;
+        }
+
+        .profile-modal:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-wrapper { position: relative; flex-shrink: 0; }
+
+        #pfp {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            object-fit: cover;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            display: block;
+        }
+
+        .status-dot {
+            position: absolute; bottom: 4px; right: 4px;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 3px solid rgba(20, 0, 0, 1);
+        }
+        
+        .status-online { background-color: #43b581; box-shadow: 0 0 8px #43b581; }
+        .status-idle { background-color: #faa61a; box-shadow: 0 0 8px #faa61a; }
+        .status-dnd { background-color: #f04747; box-shadow: 0 0 8px #f04747; }
+        .status-offline { background-color: #747f8d; }
+
+        #username {
+            font-size: 1.5rem; font-weight: 800;
+            letter-spacing: 0.5px; line-height: 1.1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+            margin-top: 5px;
+        }
+
+        .quote-container {
+            font-size: 1rem; font-weight: 300; font-style: italic;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.4; max-width: 95%;
+            min-height: 1.8em;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .cursor {
+            display: inline-block; width: 1px;
+            animation: blink 1s infinite;
+            color: rgba(255,255,255,0.5);
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .socials { display: flex; gap: 20px; margin-top: 10px; }
+        .social-btn {
+            color: #fff; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px; border-radius: 12px;
+            border: 1px solid transparent; text-decoration: none;
+        }
+        .social-btn svg { width: 24px; height: 24px; fill: currentColor; }
+        
+        .social-btn:hover {
+            background: rgba(150, 0, 0, 0.3); border-color: rgba(200, 0, 0, 0.6);
+            transform: scale(1.1); box-shadow: 0 0 20px rgba(150, 0, 0, 0.5);
+        }
+
+        .footer-credit {
+            font-size: 0.65rem; font-weight: 200; font-style: italic;
+            color: rgba(255, 255, 255, 0.3); margin-top: 15px;
+            letter-spacing: 0.5px; pointer-events: none;
+        }
+
+        .player-modal {
+            width: 90%; max-width: 380px;
+            padding: 15px 20px;
+            border-radius: 20px;
+            display: flex; align-items: center; gap: 15px;
+            background: rgba(0, 0, 0, 0.65); 
+        }
+
+        .album-art {
+            width: 55px; height: 55px;
+            border-radius: 10px; object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
+
+        .player-info {
+            flex: 1; display: flex; flex-direction: column; 
+            justify-content: center; overflow: hidden;
+            text-align: left;
+        }
+
+        .track-name {
+            font-size: 0.9rem; font-weight: 600; color: #fff;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .track-artist {
+            font-size: 0.7rem; font-weight: 300; font-style: italic;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 2px; margin-bottom: 6px;
+        }
+
+        .seek-container {
+            display: flex; align-items: center; gap: 8px;
+            width: 100%;
+        }
+
+        .time-text {
+            font-size: 0.6rem; font-family: monospace;
+            color: rgba(255, 255, 255, 0.6);
+            min-width: 30px;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none; width: 100%;
+            background: transparent; cursor: pointer;
+        }
+        
+        input[type=range]:focus { outline: none; }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 10px; width: 10px;
+            border-radius: 50%; background: #fff;
+            margin-top: -3px; box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px;
+            cursor: pointer; background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+        
+        input[type=range]::-moz-range-thumb {
+            height: 10px; width: 10px; border: none;
+            border-radius: 50%; background: #fff;
+        }
+        input[type=range]::-moz-range-track {
+            width: 100%; height: 4px;
+            cursor: pointer; background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+
+        .play-btn {
+            background: none; border: none; cursor: pointer;
+            color: #fff; padding: 5px;
+            transition: transform 0.2s ease, color 0.2s;
+        }
+        .play-btn:hover { color: #d00000; transform: scale(1.1); }
+        .play-btn svg { width: 28px; height: 28px; fill: currentColor; }
+
+        @media screen and (max-height: 650px) {
+            body { justify-content: flex-start; overflow-y: auto; padding: 20px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-layer"></div>
+    <div class="noise-layer"></div>
+
+    <div class="glass-box profile-modal">
+        <div class="profile-wrapper">
+            <!-- Avatar loaded via JS -->
+            <img id="pfp" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="User Avatar">
+            <div id="status" class="status-dot status-offline"></div>
+        </div>
+
+        <div id="username">Loading...</div>
+
+        <div class="quote-container">
+            <span id="typewriter-text"></span><span class="cursor">|</span>
+        </div>
+
+        <div class="socials">
+            <!-- Instagram -->
+            <a href="https://instagram.com/81892s" target="_blank" class="social-btn" title="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="footer-credit">Made By Gato (@not_.gato)</div>
+    </div>
+
+    <div class="glass-box player-modal">
+        <img src="https://random.getunx.cc/Assets/images%20-%202026-01-27T124109.584.jpeg" alt="Art" class="album-art">
+        
+        <div class="player-info">
+            <div class="track-name">Give Me More</div>
+            <div class="track-artist">By Britney Spears</div>
+            
+            <div class="seek-container">
+                <span id="currTime" class="time-text">0:00</span>
+                <input type="range" id="seekSlider" value="0" max="100">
+                <span id="durTime" class="time-text">0:00</span>
+            </div>
+        </div>
+
+        <button id="playBtn" class="play-btn">
+            <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+
+        <audio id="audio" src="https://random.getunx.cc/Assets/Britney%20Spears%20-%20Gimme%20More.mp3" preload="auto"></audio>
+    </div>
+
+    <script>
+        // UPDATED USER ID
+        const userID = "586568393801596928";
+        
+        async function fetchDiscordData() {
+            try {
+                const response = await fetch(`https://api.lanyard.rest/v1/users/${userID}`);
+                const json = await response.json();
+
+                if (json.success) {
+                    const data = json.data;
+                    const discordUser = data.discord_user;
+                    const status = data.discord_status;
+
+                    const avatarHash = discordUser.avatar;
+                    const avatarUrl = avatarHash 
+                        ? `https://cdn.discordapp.com/avatars/${userID}/${avatarHash}.png?size=256`
+                        : `https://cdn.discordapp.com/embed/avatars/${parseInt(discordUser.discriminator) % 5}.png`;
+                    
+                    document.getElementById('pfp').src = avatarUrl;
+                    document.getElementById('username').innerText = discordUser.username;
+
+                    const statusDot = document.getElementById('status');
+                    statusDot.className = 'status-dot';
+                    if (status === 'online') statusDot.classList.add('status-online');
+                    else if (status === 'idle') statusDot.classList.add('status-idle');
+                    else if (status === 'dnd') statusDot.classList.add('status-dnd');
+                    else statusDot.classList.add('status-offline');
+                }
+            } catch (error) { console.error(error); }
+        }
+        fetchDiscordData();
+        setInterval(fetchDiscordData, 30000);
+
+        // UPDATED DESCRIPTION TEXT
+        const textToType = 'The Goat';
+        const typeWriterElement = document.getElementById('typewriter-text');
+        let charIndex = 0;
+
+        function typeWriter() {
+            if (charIndex < textToType.length) {
+                typeWriterElement.innerHTML += textToType.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 150); // Slower typing speed for short text
+            }
+        }
+        setTimeout(typeWriter, 500);
+
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('playBtn');
+        const playIcon = document.getElementById('playIcon');
+        const pauseIcon = document.getElementById('pauseIcon');
+        const seekSlider = document.getElementById('seekSlider');
+        const currTimeText = document.getElementById('currTime');
+        const durTimeText = document.getElementById('durTime');
+
+        let isPlaying = false;
+        let isDragging = false;
+
+        window.addEventListener('load', () => {
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    isPlaying = true;
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                }).catch(error => {
+                    console.log("Autoplay prevented by browser.");
+                    isPlaying = false;
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                });
+            }
+        });
+
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                audio.pause();
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            } else {
+                audio.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            if (!isDragging) {
+                const progress = (audio.currentTime / audio.duration) * 100;
+                seekSlider.value = progress || 0;
+            }
+            currTimeText.innerText = formatTime(audio.currentTime);
+            durTimeText.innerText = formatTime(audio.duration);
+        });
+
+        seekSlider.addEventListener('input', () => {
+            isDragging = true;
+            const seekTime = (seekSlider.value / 100) * audio.duration;
+            currTimeText.innerText = formatTime(seekTime);
+        });
+
+        seekSlider.addEventListener('change', () => {
+            const seekTime = (seekSlider.value / 100) * audio.duration;
+            audio.currentTime = seekTime;
+            isDragging = false;
+        });
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        audio.volume = 0.5;
+    </script>
+</body>
+</html>
