@@ -24,7 +24,7 @@
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1;
-            background: linear-gradient(135deg, #8B0000 0%, #000000 90%);
+            background: linear-gradient(135deg, #000082 0%, #000000 90%);
         }
 
         .noise-layer {
@@ -124,10 +124,10 @@
         .social-btn svg { width: 24px; height: 24px; fill: currentColor; }
         
         .social-btn:hover {
-            background: rgba(139, 0, 0, 0.4); 
-            border-color: rgba(139, 0, 0, 0.8);
+            background: rgba(0, 0, 130, 0.4); 
+            border-color: rgba(0, 0, 130, 0.8);
             transform: scale(1.1); 
-            box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0, 0, 130, 0.5);
         }
 
         .footer-credit {
@@ -211,7 +211,7 @@
             color: #fff; padding: 5px;
             transition: transform 0.2s ease, color 0.2s;
         }
-        .play-btn:hover { color: #8B0000; transform: scale(1.1); }
+        .play-btn:hover { color: #000082; transform: scale(1.1); }
         .play-btn svg { width: 28px; height: 28px; fill: currentColor; }
 
         @media screen and (max-height: 650px) {
@@ -248,11 +248,11 @@
     </div>
 
     <div class="glass-box player-modal">
-        <img src="https://random.getunx.cc/Assets/SFXC.jpeg" alt="Art" class="album-art">
+        <img src="https://random.getunx.cc/Assets/Screenshot_20260204_171926_YouTube.png" alt="Art" class="album-art">
         
         <div class="player-info">
-            <div class="track-name">Aura</div>
-            <div class="track-artist">By Ogryzek</div>
+            <div class="track-name">Casei Com a Putaria</div>
+            <div class="track-artist">MC Paiva & MC Ryan SP</div>
             
             <div class="seek-container">
                 <span id="currTime" class="time-text">0:00</span>
@@ -266,7 +266,7 @@
             <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
 
-        <audio id="audio" src="https://random.getunx.cc/Assets/SFX%20(1).mp3" preload="auto"></audio>
+        <audio id="audio" src="https://random.getunx.cc/Assets/music.mp3" preload="auto"></audio>
     </div>
 
     <script>
@@ -302,14 +302,23 @@
         fetchDiscordData();
         setInterval(fetchDiscordData, 30000);
 
-        const textToType = "FX's dad and best support.";
+        const textToType = 'Brazillian moderator of <strong style="background: linear-gradient(to right, #0000ff, #87cefa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Overdrive H</strong> 🇧🇷';
         const typeWriterElement = document.getElementById('typewriter-text');
         let charIndex = 0;
 
         function typeWriter() {
             if (charIndex < textToType.length) {
-                typeWriterElement.innerHTML += textToType.charAt(charIndex);
-                charIndex++;
+                const char = textToType.charAt(charIndex);
+                if (char === '<') {
+                    const tagEnd = textToType.indexOf('>', charIndex);
+                    if (tagEnd !== -1) {
+                        typeWriterElement.innerHTML += textToType.substring(charIndex, tagEnd + 1);
+                        charIndex = tagEnd + 1;
+                    }
+                } else {
+                    typeWriterElement.innerHTML += char;
+                    charIndex++;
+                }
                 setTimeout(typeWriter, 100); 
             }
         }
